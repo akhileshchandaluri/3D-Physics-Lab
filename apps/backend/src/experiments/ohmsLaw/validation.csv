@@ -1,0 +1,9 @@
+# Ohm's Law Experiment Validation Sheet
+# Compares outputs of physics.ts against expected text book calculations.
+
+Test Case,Voltage (v),Resistance (Ω),Temperature (°C),Expected Current (A),Expected Effective Resistance (Ω),Expected Power (W),Notes
+Room Temp 1, 5, 10, 25, 0.5, 10, 2.5, Baseline calculation
+Room Temp 2, 10, 10, 25, 1.0, 10, 10.0, Increased voltage
+Hot Wire 1, 5, 10, 50, 0.4545, 11, 2.2727, Temperature effect reduces current
+Hot Wire 2, 12, 100, 75, 0.1, 120, 1.2, Larger temperature change
+Bulb check, 24, 100, 25, 0.24, 100, 5.76, Exceeds max brightness threshold

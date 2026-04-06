@@ -1,11 +1,261 @@
+/* ===== DESIGN SYSTEM — LIGHT (default) + DARK ===== */
+:root {
+  /* Primary Palette */
+  --primary-50: #eef2ff;
+  --primary-100: #e0e7ff;
+  --primary-200: #c7d2fe;
+  --primary-300: #a5b4fc;
+  --primary-400: #818cf8;
+  --primary-500: #6366f1;
+  --primary-600: #4f46e5;
+  --primary-700: #4338ca;
+  --primary-800: #3730a3;
+  --primary-900: #312e81;
+
+  /* Accent */
+  --accent-400: #34d399;
+  --accent-500: #10b981;
+  --accent-600: #059669;
+
+  /* Warm */
+  --warm-400: #fb923c;
+  --warm-500: #f97316;
+
+  /* ── Light theme tokens ── */
+  --surface-primary: #f8f9fc;
+  --surface-card: rgba(255, 255, 255, 0.75);
+  --surface-card-hover: rgba(255, 255, 255, 0.95);
+  --surface-glass: rgba(255, 255, 255, 0.65);
+  --surface-glass-border: rgba(0, 0, 0, 0.06);
+  --surface-elevated: #ffffff;
+
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.1);
+  --border-accent: rgba(99, 102, 241, 0.25);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.12);
+
+  --nav-bg: rgba(255, 255, 255, 0.82);
+  --hero-orb-1: rgba(99, 102, 241, 0.12);
+  --hero-orb-2: rgba(139, 92, 246, 0.10);
+  --hero-orb-3: rgba(16, 185, 129, 0.08);
+  --grid-line: rgba(0, 0, 0, 0.03);
+  --badge-bg: rgba(99, 102, 241, 0.08);
+  --badge-border: rgba(99, 102, 241, 0.15);
+  --proof-bg: rgba(0, 0, 0, 0.01);
+  --section-alt-bg: rgba(0, 0, 0, 0.015);
+  --input-bg: rgba(0, 0, 0, 0.03);
+  --input-focus-bg: rgba(0, 0, 0, 0.01);
+  --input-focus-ring: rgba(99, 102, 241, 0.12);
+  --auth-brand-bg: linear-gradient(160deg, rgba(99, 102, 241, 0.06) 0%, rgba(139, 92, 246, 0.03) 100%);
+  --auth-form-bg: rgba(255, 255, 255, 0.5);
+  --auth-spin-bg: rgba(99, 102, 241, 0.03);
+  --error-bg: rgba(239, 68, 68, 0.06);
+  --error-border: rgba(239, 68, 68, 0.15);
+  --error-text: #dc2626;
+  --social-btn-bg: rgba(0, 0, 0, 0.02);
+  --social-btn-hover: rgba(0, 0, 0, 0.04);
+  --social-btn-border: rgba(0, 0, 0, 0.1);
+  --logout-hover-bg: rgba(239, 68, 68, 0.06);
+  --logout-hover-border: rgba(239, 68, 68, 0.15);
+  --cta-orb-1: rgba(99, 102, 241, 0.10);
+  --cta-orb-2: rgba(139, 92, 246, 0.08);
+  --scrollbar-thumb: #d1d5db;
+  --scrollbar-hover: #9ca3af;
+  --toggle-bg: rgba(0, 0, 0, 0.05);
+  --toggle-hover: rgba(0, 0, 0, 0.08);
+  --toggle-color: #4b5563;
+  --spinner-track: rgba(255, 255, 255, 0.3);
+
+  /* Shared */
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+}
+
+/* ── Dark theme override ── */
+[data-theme="dark"] {
+  --surface-primary: #0a0a1a;
+  --surface-card: rgba(255, 255, 255, 0.03);
+  --surface-card-hover: rgba(255, 255, 255, 0.06);
+  --surface-glass: rgba(255, 255, 255, 0.05);
+  --surface-glass-border: rgba(255, 255, 255, 0.08);
+  --surface-elevated: #141428;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(99, 102, 241, 0.3);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.25);
+
+  --nav-bg: rgba(10, 10, 26, 0.82);
+  --hero-orb-1: rgba(99, 102, 241, 0.25);
+  --hero-orb-2: rgba(139, 92, 246, 0.20);
+  --hero-orb-3: rgba(16, 185, 129, 0.15);
+  --grid-line: rgba(255, 255, 255, 0.02);
+  --badge-bg: rgba(99, 102, 241, 0.12);
+  --badge-border: rgba(99, 102, 241, 0.25);
+  --proof-bg: rgba(255, 255, 255, 0.01);
+  --section-alt-bg: rgba(255, 255, 255, 0.01);
+  --input-bg: rgba(255, 255, 255, 0.04);
+  --input-focus-bg: rgba(255, 255, 255, 0.06);
+  --input-focus-ring: rgba(99, 102, 241, 0.15);
+  --auth-brand-bg: linear-gradient(160deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
+  --auth-form-bg: rgba(10, 10, 26, 0.6);
+  --auth-spin-bg: rgba(99, 102, 241, 0.06);
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --error-border: rgba(239, 68, 68, 0.2);
+  --error-text: #fca5a5;
+  --social-btn-bg: rgba(255, 255, 255, 0.03);
+  --social-btn-hover: rgba(255, 255, 255, 0.06);
+  --social-btn-border: rgba(255, 255, 255, 0.1);
+  --logout-hover-bg: rgba(239, 68, 68, 0.08);
+  --logout-hover-border: rgba(239, 68, 68, 0.2);
+  --cta-orb-1: rgba(99, 102, 241, 0.20);
+  --cta-orb-2: rgba(139, 92, 246, 0.15);
+  --scrollbar-thumb: #374151;
+  --scrollbar-hover: #4b5563;
+  --toggle-bg: rgba(255, 255, 255, 0.06);
+  --toggle-hover: rgba(255, 255, 255, 0.1);
+  --toggle-color: #94a3b8;
+  --spinner-track: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== RESET ===== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  background: #fafafa;
-  color: #111;
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--surface-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.3); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-fade-in-up { animation: fadeInUp 0.8s var(--ease-out) both; }
+.animate-fade-in { animation: fadeIn 0.6s var(--ease-out) both; }
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
+
+/* ===== THEME TOGGLE ===== */
+.theme-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--toggle-bg);
+  color: var(--toggle-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  background: var(--toggle-hover);
+  color: var(--text-primary);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }

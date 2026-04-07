@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Physics UI Testing</title>
+    <style>
+      body { margin: 0; padding: 0; overflow: hidden; background-color: #1a1a1a; font-family: sans-serif; color: white;}
+      #root { width: 100vw; height: 100vh; display: flex; flex-direction: column; }
+      #header { background: #2a2a2a; padding: 10px 20px; display: flex; align-items: center; border-bottom: 1px solid #444; }
+      #main-content { display: flex; flex: 1; height: calc(100vh - 50px); }
+      #canvas-container { flex: 1; height: 100%; position: relative; }
+      #ui-panel { width: 350px; background: #2a2a2a; padding: 20px; box-sizing: border-box; overflow-y: auto; border-left: 1px solid #444; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

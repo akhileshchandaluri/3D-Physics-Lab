@@ -127,6 +127,12 @@
   height: 20px;
 }
 
+.auth-logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
 .auth-brand-title {
   font-family: var(--font-display);
   font-size: 28px;

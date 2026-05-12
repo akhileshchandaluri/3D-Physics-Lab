@@ -51,6 +51,16 @@
   height: 20px;
 }
 
+.brand-logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+.footer-logo {
+  height: 40px;
+}
+
 .navbar-links {
   display: flex;
   gap: 32px;

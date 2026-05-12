@@ -191,10 +191,8 @@ export function LandingPage() {
       <nav className="navbar" id="navbar">
         <div className="navbar-inner">
           <Link to="/" className="navbar-brand">
-            <div className="brand-icon">
-              <AtomIcon />
-            </div>
-            <span className="brand-text">PhySim Lab</span>
+            <img src="/klulogo.png" alt="KLU Logo" className="brand-logo-img" />
+            <span className="brand-text">Virtual Labs</span>
           </Link>
           <div className="navbar-links">
             <a href="#experiments">Experiments</a>
@@ -329,7 +327,7 @@ export function LandingPage() {
       <section className="section section-alt" id="features">
         <div className="section-inner">
           <div className="section-header scroll-reveal">
-            <span className="section-tag">Why PhySim Lab</span>
+            <span className="section-tag">Why Virtual Labs</span>
             <h2 className="section-title">Built for Real Understanding</h2>
             <p className="section-desc">
               Go beyond memorization — our platform is engineered to help you develop
@@ -388,7 +386,7 @@ export function LandingPage() {
             <span className="section-tag">Student Voices</span>
             <h2 className="section-title">Loved by Learners</h2>
             <p className="section-desc">
-              Hear what students have to say about their experience with PhySim Lab.
+              Hear what students have to say about their experience with Virtual Labs.
             </p>
           </div>
 
@@ -425,8 +423,8 @@ export function LandingPage() {
 
           <div className="faq-list">
             {[
-              { q: 'Is PhySim Lab free to use?', a: 'Yes! All basic simulations are completely free. Create an account and start experimenting immediately.' },
-              { q: 'Do I need to install any software?', a: 'No installation required. PhySim Lab runs entirely in your browser on any device — desktop, tablet, or mobile.' },
+              { q: 'Is Virtual Labs free to use?', a: 'Yes! All basic simulations are completely free. Create an account and start experimenting immediately.' },
+              { q: 'Do I need to install any software?', a: 'No installation required. Virtual Labs runs entirely in your browser on any device — desktop, tablet, or mobile.' },
               { q: 'Can I use simulation data for my lab reports?', a: 'Absolutely. You can export readings, graphs, and observations directly from each experiment session.' },
               { q: 'How accurate are the simulations?', a: 'Our models are built using validated physics equations and are reviewed by faculty. They closely mirror real-world lab behavior.' },
               { q: 'Will more experiments be added?', a: 'Yes! We regularly expand our library. Simple Pendulum, Projectile Motion, and Snell\'s Law are coming soon.' },
@@ -469,33 +467,13 @@ export function LandingPage() {
       <footer className="footer" id="footer">
         <div className="footer-inner">
           <div className="footer-brand">
-            <div className="brand-icon"><AtomIcon /></div>
-            <span className="brand-text">PhySim Lab</span>
+            <img src="/klulogo.png" alt="KLU Logo" className="brand-logo-img footer-logo" />
+            <span className="brand-text">Virtual Labs</span>
             <p className="footer-tagline">Interactive physics simulations for the curious mind.</p>
-          </div>
-
-          <div className="footer-links-group">
-            <div className="footer-col">
-              <h4>Platform</h4>
-              <a href="#experiments">Experiments</a>
-              <a href="#features">Features</a>
-              <a href="#how-it-works">How It Works</a>
-            </div>
-            <div className="footer-col">
-              <h4>Resources</h4>
-              <a href="#faq">FAQ</a>
-              <a href="#testimonials">Reviews</a>
-              <Link to="/signup">Get Started</Link>
-            </div>
-            <div className="footer-col">
-              <h4>Account</h4>
-              <Link to="/login">Log In</Link>
-              <Link to="/signup">Sign Up</Link>
-            </div>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} PhySim Lab. Built with ❤️ for curious learners.</p>
+          <p>&copy; {new Date().getFullYear()} Virtual Labs. Built with ❤️ for curious learners.</p>
         </div>
       </footer>
     </div>

@@ -79,6 +79,12 @@
   color: white;
 }
 
+.dash-brand .brand-logo-img {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+}
+
 .dash-user-area {
   display: flex;
   align-items: center;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 import { useOhmsLaw } from '../../hooks/useOhmsLaw';
 import { CircuitDiagram } from './CircuitDiagram';
 import { IVChart } from './IVChart';
@@ -18,6 +19,7 @@ const sidebarTabs = [
 /* ── Navbar ── */
 function ExperimentNavbar() {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   return (
     <nav className="exp-navbar">
       <a className="exp-navbar__logo" href="/">
@@ -29,6 +31,29 @@ function ExperimentNavbar() {
       </a>
       <div className="exp-navbar__links">
         <button
+          className="exp-navbar__link exp-navbar__theme-btn"
+          onClick={toggleTheme}
+          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+        >
+          {theme === 'light' ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          )}
+        </button>
+        <button
           className="exp-navbar__link exp-navbar__link--back"
           onClick={() => navigate('/dashboard')}
         >
@@ -39,45 +64,6 @@ function ExperimentNavbar() {
         </button>
       </div>
     </nav>
-  );
-}
-
-/* ── Footer ── */
-function ExperimentFooter() {
-  return (
-    <footer className="exp-footer">
-      <div className="exp-footer__grid">
-        <div>
-          <div className="exp-footer__col-title">Community Links</div>
-          <span className="exp-footer__link">Sakshat Portal</span>
-          <span className="exp-footer__link">Outreach Portal</span>
-          <span className="exp-footer__link">FAQ: Virtual Labs</span>
-        </div>
-        <div>
-          <div className="exp-footer__col-title">Contact Us</div>
-          <div className="exp-footer__text">
-            Phone: General Information: 011-26582050
-            <br />
-            Email: support@vlabs.ac.in
-          </div>
-        </div>
-        <div>
-          <div className="exp-footer__col-title">Follow Us</div>
-          <div className="exp-footer__socials">
-            <div className="exp-footer__social-icon" style={{ background: '#1DA1F2' }}>𝕏</div>
-            <div className="exp-footer__social-icon" style={{ background: '#4267B2' }}>f</div>
-            <div className="exp-footer__social-icon" style={{ background: '#FF0000' }}>▶</div>
-            <div className="exp-footer__social-icon" style={{ background: '#0077B5' }}>in</div>
-          </div>
-        </div>
-      </div>
-      <div className="exp-footer__divider" />
-      <div className="exp-footer__copy">
-        <a href="https://www.gnu.org/licenses/agpl-3.0.en.html" target="_blank" rel="noreferrer">AGPL 3.0</a>
-        &nbsp;&amp;&nbsp;
-        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer">Creative Commons (CC BY-NC-SA 4.0)</a>
-      </div>
-    </footer>
   );
 }
 
@@ -391,7 +377,7 @@ export function OhmsLaw() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#fff' }}>
+      <div style={{ height: '100vh', background: '#fff', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <ExperimentNavbar />
         <div className="exp-loading">
           <div className="exp-loading__spinner" />
@@ -403,7 +389,7 @@ export function OhmsLaw() {
 
   if (error) {
     return (
-      <div style={{ minHeight: '100vh', background: '#fff' }}>
+      <div style={{ height: '100vh', background: '#fff', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <ExperimentNavbar />
         <div className="exp-loading" style={{ color: '#e74c3c' }}>Error: {error}</div>
       </div>
@@ -443,7 +429,7 @@ export function OhmsLaw() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fff', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100vh', background: '#fff', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <ExperimentNavbar />
 
       {/* Breadcrumb header */}
@@ -476,8 +462,6 @@ export function OhmsLaw() {
           {renderContent()}
         </main>
       </div>
-
-      <ExperimentFooter />
     </div>
   );
 }

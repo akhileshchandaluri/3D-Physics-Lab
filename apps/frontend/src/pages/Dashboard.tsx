@@ -8,7 +8,7 @@ const sessions = [
   { id: 2, code: 'Session 02', title: 'Determination of Lattice Constant', path: '', available: false },
   { id: 3, code: 'Session 03', title: 'Determination of Particle Size of Lycopodium Powder Using Laser', path: '', available: false },
   { id: 4, code: 'Session 04', title: 'Determination of Young\'s Modulus — Uniform Bending Method', path: '', available: false },
-  { id: 5, code: 'Session 05', title: 'Determination of Creep Constant', path: '', available: false },
+  { id: 5, code: 'Session 05', title: 'Determination of Creep Constant', path: '/experiments/creep', available: true },
   { id: 6, code: 'Session 06', title: 'Determination of Hall Coefficient Using Hall Effect', path: '', available: false },
   { id: 7, code: 'Session 07', title: 'Determination of Planck\'s Constant', path: '', available: false },
   { id: 8, code: 'Session 08', title: 'Solar Cell Characteristics', path: '', available: false },
@@ -78,11 +78,11 @@ export function Dashboard() {
                 <span className="dash-mini-label">Total Sessions</span>
               </div>
               <div className="dash-mini-stat">
-                <span className="dash-mini-val">1</span>
+                <span className="dash-mini-val">2</span>
                 <span className="dash-mini-label">Available</span>
               </div>
               <div className="dash-mini-stat">
-                <span className="dash-mini-val">10</span>
+                <span className="dash-mini-val">9</span>
                 <span className="dash-mini-label">Coming Soon</span>
               </div>
             </div>

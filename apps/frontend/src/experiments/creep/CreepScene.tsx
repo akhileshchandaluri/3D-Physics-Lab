@@ -12,6 +12,7 @@ function CreepModel({ materialType, initialLength, elongation, hasSnapped }: {
   const { scene } = useGLTF('/models/creep.glb');
   const wireRef = useRef<THREE.Mesh>(null);
   const weightRef = useRef<THREE.Mesh>(null);
+  const smoothedLengthRef = useRef(0);
 
   const wireColor = useMemo(() => {
     switch (materialType) {
@@ -37,15 +38,29 @@ function CreepModel({ materialType, initialLength, elongation, hasSnapped }: {
   // Adjust these values to align with your GLB model's hook position
   const hookPosition = new THREE.Vector3(0, 2.2, 0);
   const baseLength = initialLength * 0.15;
-  const currentLength = hasSnapped ? baseLength * 1.3 : (baseLength + elongation * 0.15);
+  const targetLength = hasSnapped ? baseLength * 1.3 : (baseLength + elongation * 0.15);
 
-  useFrame(() => {
+  useEffect(() => {
+    smoothedLengthRef.current = targetLength;
+  }, [targetLength]);
+
+  useFrame((_, delta) => {
+    // Smoothly interpolate wire extension so motion is continuous instead of per-frame jumps.
+    smoothedLengthRef.current = THREE.MathUtils.damp(
+      smoothedLengthRef.current || targetLength,
+      targetLength,
+      8,
+      delta,
+    );
+
+    const animatedLength = smoothedLengthRef.current;
+
     if (wireRef.current) {
-      wireRef.current.position.y = hookPosition.y - currentLength / 2;
-      wireRef.current.scale.y = currentLength / baseLength;
+      wireRef.current.position.y = hookPosition.y - animatedLength / 2;
+      wireRef.current.scale.y = animatedLength / baseLength;
     }
     if (weightRef.current) {
-      weightRef.current.position.y = hookPosition.y - currentLength - 0.3;
+      weightRef.current.position.y = hookPosition.y - animatedLength - 0.3;
     }
   });
 
@@ -67,7 +82,7 @@ function CreepModel({ materialType, initialLength, elongation, hasSnapped }: {
 
       {/* Snap effect */}
       {hasSnapped && (
-        <mesh position={[hookPosition.x, hookPosition.y - currentLength / 2, hookPosition.z]}>
+        <mesh position={[hookPosition.x, hookPosition.y - targetLength / 2, hookPosition.z]}>
           <sphereGeometry args={[0.1, 16, 16]} />
           <meshStandardMaterial color="#ff4444" emissive="#ff0000" emissiveIntensity={0.5} />
         </mesh>

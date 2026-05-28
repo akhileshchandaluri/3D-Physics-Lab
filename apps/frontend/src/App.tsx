@@ -7,6 +7,7 @@ import { SignupPage } from './pages/SignupPage';
 import { Dashboard } from './pages/Dashboard';
 import { OhmsLaw } from './experiments/ohmsLaw/OhmsLaw';
 import { Creep } from './experiments/creep/Creep';
+import { SolarCellCharacteristics } from './experiments/solarCell/SolarCellCharacteristics';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -44,6 +45,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
               <Creep />
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/experiments/solar-cell-characteristics"
+        element={
+          <ProtectedRoute>
+            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+              <SolarCellCharacteristics />
             </div>
           </ProtectedRoute>
         }

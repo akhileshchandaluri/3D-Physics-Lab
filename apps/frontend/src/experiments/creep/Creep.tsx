@@ -145,9 +145,14 @@ function SimulationSection({
   isPlaying, setIsPlaying,
   hasSnapped,
   runSimulation,
+  openSectionsPanel,
+  goToNextSection,
 }: any) {
   const [readings, setReadings] = useState<Reading[]>([]);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const animRef = useRef<number | null>(null);
+  const playStartRealMsRef = useRef<number | null>(null);
+  const playStartSimMinRef = useRef<number>(0);
 
   const addReading = () => {
     if (!simulationData || !simulationData.history) return;
@@ -178,26 +183,60 @@ function SimulationSection({
 
   useEffect(() => {
     if (isPlaying && simulationData && !hasSnapped) {
-      const maxIdx = simulationData.history.length - 1;
+      const history = simulationData.history;
+      const maxIdx = history.length - 1;
+
+      if (playStartRealMsRef.current === null) {
+        playStartRealMsRef.current = Date.now();
+        playStartSimMinRef.current = history[currentFrameIdx]?.timeMinutes ?? 0;
+      }
+
       const step = () => {
-        setCurrentFrameIdx((prev: number) => {
-          if (prev >= maxIdx) {
-            setIsPlaying(false);
-            return prev;
+        const playStartRealMs = playStartRealMsRef.current;
+        if (playStartRealMs === null) return;
+
+        const elapsedRealMinutes = ((Date.now() - playStartRealMs) / 60000) * playbackSpeed;
+        const targetTimeMinutes = playStartSimMinRef.current + elapsedRealMinutes;
+
+        let targetIdx = maxIdx;
+        for (let i = 0; i < history.length; i += 1) {
+          if (history[i].timeMinutes >= targetTimeMinutes) {
+            targetIdx = i;
+            break;
           }
-          return prev + 1;
-        });
+        }
+
+        setCurrentFrameIdx(targetIdx);
+
+        if (targetIdx >= maxIdx) {
+          setIsPlaying(false);
+          playStartRealMsRef.current = null;
+        }
       };
-      animRef.current = window.setInterval(step, 200);
+
+      animRef.current = window.setInterval(step, 100);
     }
+
     return () => {
       if (animRef.current) clearInterval(animRef.current);
+      animRef.current = null;
     };
-  }, [isPlaying, simulationData, hasSnapped]);
+  }, [isPlaying, simulationData, hasSnapped, playbackSpeed, currentFrameIdx, setCurrentFrameIdx, setIsPlaying]);
+
+  useEffect(() => {
+    if (!isPlaying) {
+      playStartRealMsRef.current = null;
+      if (simulationData?.history?.[currentFrameIdx]) {
+        playStartSimMinRef.current = simulationData.history[currentFrameIdx].timeMinutes;
+      }
+    }
+  }, [isPlaying, simulationData, currentFrameIdx]);
 
   const handlePlayPause = () => {
     if (hasSnapped) {
       setCurrentFrameIdx(0);
+      playStartRealMsRef.current = null;
+      playStartSimMinRef.current = 0;
       setIsPlaying(true);
     } else {
       setIsPlaying(!isPlaying);
@@ -207,11 +246,22 @@ function SimulationSection({
   const handleReset = () => {
     setIsPlaying(false);
     setCurrentFrameIdx(0);
+    playStartRealMsRef.current = null;
+    playStartSimMinRef.current = 0;
   };
 
   return (
     <div className="creep-sim-layout">
       <div className="creep-canvas-area">
+        <div className="creep-nav-actions">
+          <button className="creep-nav-btn" onClick={openSectionsPanel}>
+            Open Sections
+          </button>
+          <button className="creep-nav-btn creep-nav-btn--primary" onClick={goToNextSection}>
+            Next Page
+          </button>
+        </div>
+
         <CreepScene
           materialType={materialType}
           initialLength={initialLength}
@@ -246,6 +296,26 @@ function SimulationSection({
                   </svg>
                 )}
               </button>
+            </div>
+            <div className="creep-speed-controls">
+              <span className="creep-speed-controls__label">Speed</span>
+              <select
+                className="creep-speed-controls__select"
+                value={playbackSpeed}
+                onChange={(e) => {
+                  setPlaybackSpeed(Number(e.target.value));
+                  playStartRealMsRef.current = Date.now();
+                  playStartSimMinRef.current = simulationData.history[currentFrameIdx].timeMinutes;
+                }}
+              >
+                <option value={0.5}>0.5x</option>
+                <option value={0.75}>0.75x</option>
+                <option value={1}>1x (real time)</option>
+                <option value={1.25}>1.25x</option>
+                <option value={1.5}>1.5x</option>
+                <option value={2}>2x</option>
+                <option value={3}>3x</option>
+              </select>
             </div>
             <input
               className="vlabs-anim-slider"
@@ -454,6 +524,7 @@ function SimulationSection({
 /* ===== Main Creep Component ===== */
 export function Creep() {
   const [activeTab, setActiveTab] = useState(0);
+  const [showSidebarInSimulation, setShowSidebarInSimulation] = useState(false);
   const {
     initialLength, setInitialLength,
     loadMass, setLoadMass,
@@ -522,6 +593,11 @@ export function Creep() {
             setIsPlaying={setIsPlaying}
             hasSnapped={hasSnapped}
             runSimulation={runSimulation}
+            openSectionsPanel={() => setShowSidebarInSimulation(true)}
+            goToNextSection={() => {
+              setShowSidebarInSimulation(false);
+              setActiveTab(5);
+            }}
           />
         );
       case 5:
@@ -548,20 +624,33 @@ export function Creep() {
       </div>
 
       {/* Body: sidebar + content */}
-      <div className="exp-body">
-        <aside className="exp-sidebar">
-          <nav className="exp-sidebar__nav">
-            {sidebarTabs.map((tab, i) => (
+      <div className={`exp-body${activeTab === 4 ? ' exp-body--simulation' : ''}`}>
+        {(activeTab !== 4 || showSidebarInSimulation) && (
+          <aside className="exp-sidebar">
+            {activeTab === 4 && (
               <button
-                key={tab}
-                className={`exp-sidebar__item${activeTab === i ? ' exp-sidebar__item--active' : ''}`}
-                onClick={() => setActiveTab(i)}
+                className="exp-sidebar__close-btn"
+                onClick={() => setShowSidebarInSimulation(false)}
               >
-                {tab}
+                Hide Sections
               </button>
-            ))}
-          </nav>
-        </aside>
+            )}
+            <nav className="exp-sidebar__nav">
+              {sidebarTabs.map((tab, i) => (
+                <button
+                  key={tab}
+                  className={`exp-sidebar__item${activeTab === i ? ' exp-sidebar__item--active' : ''}`}
+                  onClick={() => {
+                    setActiveTab(i);
+                    if (i !== 4) setShowSidebarInSimulation(false);
+                  }}
+                >
+                  {tab}
+                </button>
+              ))}
+            </nav>
+          </aside>
+        )}
 
         <main className={`exp-content${activeTab === 4 ? ' exp-content--simulation' : ''}`} key={activeTab}>
           {renderContent()}

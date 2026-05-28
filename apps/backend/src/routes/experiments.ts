@@ -3,6 +3,8 @@ import type { Request, Response } from 'express';
 import { pool } from '../db.js';
 import { CREEP_EXPERIMENT_DATA } from '../experiments/creep/constants.js';
 import { runCreepSimulation } from '../experiments/creep/physics.js';
+import { SOLAR_CELL_EXPERIMENT_DATA } from '../experiments/solarCell/constants.js';
+import { computeSolarCell } from '../experiments/solarCell/physics.js';
 
 const router = Router();
 
@@ -12,6 +14,9 @@ router.get('/:slug', async (req, res) => {
   try {
     if (slug === 'creep') {
       return res.json(CREEP_EXPERIMENT_DATA);
+    }
+    if (slug === 'solar-cell-characteristics') {
+      return res.json(SOLAR_CELL_EXPERIMENT_DATA);
     }
 
     const [rows] = await pool.query(
@@ -51,6 +56,30 @@ router.post('/creep/simulate', (req: Request, res: Response) => {
     res.json(result);
   } catch (error: any) {
     console.error('Error running creep simulation:', error);
+    res.status(500).json({ error: error.message || 'Internal server error' });
+  }
+});
+
+router.post('/solar-cell-characteristics/simulate', (req: Request, res: Response) => {
+  try {
+    const { lightIntensity, rheostatResistance, loadResistance } = req.body;
+    if (
+      lightIntensity === undefined ||
+      rheostatResistance === undefined ||
+      loadResistance === undefined
+    ) {
+      return res.status(400).json({ error: 'Missing required parameters' });
+    }
+
+    const result = computeSolarCell({
+      lightIntensity: Number(lightIntensity),
+      rheostatResistance: Number(rheostatResistance),
+      loadResistance: Number(loadResistance),
+    });
+
+    res.json(result);
+  } catch (error: any) {
+    console.error('Error running solar cell simulation:', error);
     res.status(500).json({ error: error.message || 'Internal server error' });
   }
 });

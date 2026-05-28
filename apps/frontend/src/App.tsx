@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { Dashboard } from './pages/Dashboard';
 import { OhmsLaw } from './experiments/ohmsLaw/OhmsLaw';
+import { Creep } from './experiments/creep/Creep';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -33,6 +34,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
               <OhmsLaw />
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/experiments/creep"
+        element={
+          <ProtectedRoute>
+            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+              <Creep />
             </div>
           </ProtectedRoute>
         }

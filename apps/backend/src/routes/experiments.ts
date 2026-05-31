@@ -3,7 +3,6 @@ import type { Request, Response } from 'express';
 import { pool } from '../db.js';
 import { CREEP_EXPERIMENT_DATA } from '../experiments/creep/constants.js';
 import { runCreepSimulation } from '../experiments/creep/physics.js';
-import { SOLAR_CELL_EXPERIMENT_DATA } from '../experiments/solarCell/constants.js';
 import { computeSolarCell } from '../experiments/solarCell/physics.js';
 
 const router = Router();
@@ -15,10 +14,6 @@ router.get('/:slug', async (req, res) => {
     if (slug === 'creep') {
       return res.json(CREEP_EXPERIMENT_DATA);
     }
-    if (slug === 'solar-cell-characteristics') {
-      return res.json(SOLAR_CELL_EXPERIMENT_DATA);
-    }
-
     const [rows] = await pool.query(
       'SELECT * FROM experiments WHERE slug = ?',
       [slug]
@@ -62,19 +57,15 @@ router.post('/creep/simulate', (req: Request, res: Response) => {
 
 router.post('/solar-cell-characteristics/simulate', (req: Request, res: Response) => {
   try {
-    const { lightIntensity, rheostatResistance, loadResistance } = req.body;
-    if (
-      lightIntensity === undefined ||
-      rheostatResistance === undefined ||
-      loadResistance === undefined
-    ) {
+    const { lightIntensity, loadResistance, keyClosed } = req.body;
+    if (lightIntensity === undefined || loadResistance === undefined || keyClosed === undefined) {
       return res.status(400).json({ error: 'Missing required parameters' });
     }
 
     const result = computeSolarCell({
       lightIntensity: Number(lightIntensity),
-      rheostatResistance: Number(rheostatResistance),
       loadResistance: Number(loadResistance),
+      keyClosed: Boolean(keyClosed),
     });
 
     res.json(result);

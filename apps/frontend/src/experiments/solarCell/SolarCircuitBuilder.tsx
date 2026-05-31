@@ -1,11 +1,7 @@
 import { useMemo, useState } from 'react';
+import { CircuitComponentSymbol, componentDimensions } from './CircuitComponentSymbol';
 
-type ComponentKey =
-  | 'solarCell'
-  | 'ammeter'
-  | 'voltmeter'
-  | 'rheostat'
-  | 'loadResistor';
+type ComponentKey = keyof typeof componentDimensions;
 
 interface Position {
   x: number;
@@ -16,41 +12,35 @@ interface CircuitBuilderProps {
   onValidityChange: (isValid: boolean, message: string) => void;
 }
 
-const terminalMap: Record<ComponentKey, { id: string; x: number; y: number }[]> = {
-  solarCell: [
-    { id: 'solar+', x: 6, y: 26 },
-    { id: 'solar-', x: 122, y: 26 },
-  ],
-  ammeter: [
-    { id: 'ammeter+', x: 6, y: 26 },
-    { id: 'ammeter-', x: 122, y: 26 },
-  ],
-  rheostat: [
-    { id: 'rheostat-in', x: 6, y: 26 },
-    { id: 'rheostat-out', x: 122, y: 26 },
-  ],
-  loadResistor: [
-    { id: 'load-in', x: 6, y: 26 },
-    { id: 'load-out', x: 122, y: 26 },
-  ],
-  voltmeter: [
-    { id: 'voltmeter+', x: 64, y: 6 },
-    { id: 'voltmeter-', x: 64, y: 46 },
-  ],
-};
+const terminalMap = Object.fromEntries(
+  (Object.keys(componentDimensions) as ComponentKey[]).map((key) => [
+    key,
+    componentDimensions[key].terminals,
+  ]),
+) as Record<ComponentKey, { id: string; x: number; y: number }[]>;
 
+/** Matches lab diagram: V ∥ solar cell; series A → K → LOAD → return. */
 const requiredConnections: [string, string][] = [
+  ['solar+', 'voltmeter+'],
+  ['solar-', 'voltmeter-'],
   ['solar+', 'ammeter+'],
-  ['ammeter-', 'rheostat-in'],
-  ['rheostat-out', 'load-in'],
+  ['ammeter-', 'key+'],
+  ['key-', 'load-in'],
   ['load-out', 'solar-'],
-  ['voltmeter+', 'load-in'],
-  ['voltmeter-', 'load-out'],
 ];
 
 const allowedPairs = new Set(
   requiredConnections.flatMap(([a, b]) => [`${a}|${b}`, `${b}|${a}`]),
 );
+
+const defaultPositions: Record<ComponentKey, Position> = {
+  lightSource: { x: 28, y: 200 },
+  solarCell: { x: 140, y: 140 },
+  voltmeter: { x: 320, y: 145 },
+  ammeter: { x: 480, y: 100 },
+  key: { x: 680, y: 100 },
+  loadResistor: { x: 860, y: 120 },
+};
 
 function edgeKey(a: string, b: string): string {
   return [a, b].sort().join('|');
@@ -72,19 +62,14 @@ function terminalCoordinates(
 }
 
 export function SolarCircuitBuilder({ onValidityChange }: CircuitBuilderProps) {
-  const [positions, setPositions] = useState<Record<ComponentKey, Position>>({
-    solarCell: { x: 24, y: 70 },
-    ammeter: { x: 210, y: 70 },
-    rheostat: { x: 390, y: 70 },
-    loadResistor: { x: 570, y: 70 },
-    voltmeter: { x: 570, y: 220 },
-  });
+  const [positions, setPositions] = useState<Record<ComponentKey, Position>>(defaultPositions);
   const [connections, setConnections] = useState<[string, string][]>([]);
   const [dragging, setDragging] = useState<ComponentKey | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [selectedTerminal, setSelectedTerminal] = useState<string | null>(null);
+  const [showReference, setShowReference] = useState(true);
   const [statusMessage, setStatusMessage] = useState(
-    'Drag components and connect valid terminals.',
+    'Arrange components like the reference diagram, then connect terminals.',
   );
 
   const connectedSet = useMemo(
@@ -96,8 +81,8 @@ export function SolarCircuitBuilder({ onValidityChange }: CircuitBuilderProps) {
     const edges = new Set(nextConnections.map(([a, b]) => edgeKey(a, b)));
     const isValid = requiredConnections.every(([a, b]) => edges.has(edgeKey(a, b)));
     const message = isValid
-      ? 'Circuit complete. You can start the experiment.'
-      : 'Incomplete circuit. Ensure series path and voltmeter parallel connection.';
+      ? 'Circuit matches the diagram. You can start the experiment.'
+      : 'Incomplete circuit. Voltmeter parallel to cell; series path A → K → LOAD.';
     setStatusMessage(message);
     onValidityChange(isValid, message);
   };
@@ -114,8 +99,15 @@ export function SolarCircuitBuilder({ onValidityChange }: CircuitBuilderProps) {
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!dragging) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const nextX = Math.min(Math.max(0, e.clientX - rect.left - dragOffset.x), rect.width - 140);
-    const nextY = Math.min(Math.max(0, e.clientY - rect.top - dragOffset.y), rect.height - 56);
+    const dims = componentDimensions[dragging];
+    const nextX = Math.min(
+      Math.max(0, e.clientX - rect.left - dragOffset.x),
+      rect.width - dims.width,
+    );
+    const nextY = Math.min(
+      Math.max(0, e.clientY - rect.top - dragOffset.y),
+      rect.height - dims.height,
+    );
     setPositions((prev) => ({ ...prev, [dragging]: { x: nextX, y: nextY } }));
   };
 
@@ -130,7 +122,7 @@ export function SolarCircuitBuilder({ onValidityChange }: CircuitBuilderProps) {
     }
     const directedKey = `${selectedTerminal}|${terminalId}`;
     if (!allowedPairs.has(directedKey)) {
-      setStatusMessage('Invalid connection for this experiment setup.');
+      setStatusMessage('Invalid connection for this circuit diagram.');
       setSelectedTerminal(null);
       return;
     }
@@ -155,71 +147,113 @@ export function SolarCircuitBuilder({ onValidityChange }: CircuitBuilderProps) {
     onValidityChange(false, 'Circuit reset.');
   };
 
-  const components: { key: ComponentKey; label: string; short: string }[] = [
-    { key: 'solarCell', label: 'Solar Cell', short: 'SC' },
-    { key: 'ammeter', label: 'Ammeter', short: 'A' },
-    { key: 'rheostat', label: 'Rheostat', short: 'Rh' },
-    { key: 'loadResistor', label: 'Load Resistor', short: 'RL' },
-    { key: 'voltmeter', label: 'Voltmeter', short: 'V' },
+  const resetLayout = () => {
+    setPositions(defaultPositions);
+    clearConnections();
+  };
+
+  const components: { key: ComponentKey; label: string }[] = [
+    { key: 'lightSource', label: 'Lamp (MP)' },
+    { key: 'solarCell', label: 'Solar Cell' },
+    { key: 'voltmeter', label: 'Voltmeter' },
+    { key: 'ammeter', label: 'Ammeter' },
+    { key: 'key', label: 'Key' },
+    { key: 'loadResistor', label: 'Load' },
   ];
 
   return (
     <div className="solar-circuit-builder">
       <div className="solar-circuit-builder__header">
         <span>{statusMessage}</span>
-        <button className="vlabs-observations__clear" onClick={clearConnections}>
-          Reset Wires
-        </button>
+        <div className="solar-circuit-builder__actions">
+          <button
+            type="button"
+            className="vlabs-observations__clear"
+            onClick={() => setShowReference((v) => !v)}
+          >
+            {showReference ? 'Hide Reference' : 'Show Reference'}
+          </button>
+          <button type="button" className="vlabs-observations__clear" onClick={resetLayout}>
+            Reset Layout
+          </button>
+          <button type="button" className="vlabs-observations__clear" onClick={clearConnections}>
+            Reset Wires
+          </button>
+        </div>
       </div>
-      <div
-        className="solar-circuit-canvas"
-        onPointerMove={onPointerMove}
-        onPointerUp={() => setDragging(null)}
-        onPointerLeave={() => setDragging(null)}
-      >
-        <svg className="solar-circuit-wires">
-          {connections.map(([from, to]) => {
-            const p1 = terminalCoordinates(from, positions);
-            const p2 = terminalCoordinates(to, positions);
+
+      <div className="solar-circuit-builder__body">
+        {showReference && (
+          <aside className="solar-circuit-reference">
+            <div className="solar-circuit-reference__title">Reference diagram</div>
+            <img
+              src="/exp/solar/circuit-reference.png"
+              alt="Solar cell experiment circuit diagram"
+              className="solar-circuit-reference__img"
+            />
+          </aside>
+        )}
+
+        <div
+          className="solar-circuit-canvas"
+          onPointerMove={onPointerMove}
+          onPointerUp={() => setDragging(null)}
+          onPointerLeave={() => setDragging(null)}
+        >
+          <svg className="solar-circuit-wires" aria-hidden>
+            {connections.map(([from, to]) => {
+              const p1 = terminalCoordinates(from, positions);
+              const p2 = terminalCoordinates(to, positions);
+              return (
+                <line
+                  key={`${from}-${to}`}
+                  x1={p1.x}
+                  y1={p1.y}
+                  x2={p2.x}
+                  y2={p2.y}
+                  className="solar-circuit-wire"
+                />
+              );
+            })}
+          </svg>
+
+          {components.map((component) => {
+            const dims = componentDimensions[component.key];
             return (
-              <line
-                key={`${from}-${to}`}
-                x1={p1.x}
-                y1={p1.y}
-                x2={p2.x}
-                y2={p2.y}
-                className="solar-circuit-wire"
-              />
+              <div
+                key={component.key}
+                className="solar-component solar-component--symbol"
+                style={{
+                  left: positions[component.key].x,
+                  top: positions[component.key].y,
+                  width: dims.width,
+                  height: dims.height,
+                }}
+                onPointerDown={(e) => onPointerDown(component.key, e)}
+              >
+                <CircuitComponentSymbol type={component.key} />
+                {terminalMap[component.key].map((terminal) => (
+                  <button
+                    key={terminal.id}
+                    type="button"
+                    className={`solar-terminal${selectedTerminal === terminal.id ? ' selected' : ''}`}
+                    style={{ left: terminal.x - 8, top: terminal.y - 8 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      connectTerminal(terminal.id);
+                    }}
+                    title={`${component.label} (${terminal.id})`}
+                    aria-label={`${component.label} terminal ${terminal.id}`}
+                  />
+                ))}
+              </div>
             );
           })}
-        </svg>
-
-        {components.map((component) => (
-          <div
-            key={component.key}
-            className="solar-component"
-            style={{ left: positions[component.key].x, top: positions[component.key].y }}
-            onPointerDown={(e) => onPointerDown(component.key, e)}
-          >
-            <div className="solar-component__title">{component.label}</div>
-            <div className="solar-component__symbol">{component.short}</div>
-            {terminalMap[component.key].map((terminal) => (
-              <button
-                key={terminal.id}
-                className={`solar-terminal${selectedTerminal === terminal.id ? ' selected' : ''}`}
-                style={{ left: terminal.x - 5, top: terminal.y - 5 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  connectTerminal(terminal.id);
-                }}
-                title={terminal.id}
-              />
-            ))}
-          </div>
-        ))}
+        </div>
       </div>
+
       <div className="solar-circuit-builder__legend">
-        Components: Solar Cell, Ammeter, Voltmeter, Variable Resistor (Rheostat), Load Resistor, Connecting Wires
+        Connect: V parallel to solar cell (+ to +, − to −). Series: + → A → K → LOAD → −.
       </div>
     </div>
   );

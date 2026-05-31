@@ -1,7 +1,7 @@
 export interface SolarCellInput {
   lightIntensity: number; // %
-  rheostatResistance: number; // ohm
   loadResistance: number; // ohm
+  keyClosed: boolean;
 }
 
 export interface SolarCurvePoint {

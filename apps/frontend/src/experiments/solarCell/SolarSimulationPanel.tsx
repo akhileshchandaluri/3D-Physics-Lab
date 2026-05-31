@@ -4,6 +4,7 @@ interface SolarSimulationPanelProps {
   power: number;
   lightIntensity: number;
   isRunning: boolean;
+  fullscreen?: boolean;
 }
 
 export function SolarSimulationPanel({
@@ -12,11 +13,15 @@ export function SolarSimulationPanel({
   power,
   lightIntensity,
   isRunning,
+  fullscreen = false,
 }: SolarSimulationPanelProps) {
   const rayOpacity = Math.min(1, lightIntensity / 120);
-  return (
-    <div className="solar-visual">
-      <svg viewBox="0 0 700 260" className="solar-visual__svg">
+  const svg = (
+    <svg
+      viewBox="0 0 700 260"
+      className={`solar-visual__svg${fullscreen ? ' solar-visual__svg--fullscreen' : ''}`}
+      preserveAspectRatio="xMidYMid meet"
+    >
         <circle cx="95" cy="55" r="30" fill={`rgba(255, 193, 7, ${rayOpacity})`} />
         {[0, 1, 2, 3].map((idx) => (
           <line
@@ -58,6 +63,15 @@ export function SolarSimulationPanel({
           </>
         )}
       </svg>
+  );
+
+  if (fullscreen) {
+    return <div className="solar-visual solar-visual--fullscreen">{svg}</div>;
+  }
+
+  return (
+    <div className="solar-visual">
+      {svg}
       <div className="solar-visual__metrics">
         <div className="vlabs-result-card">
           <div className="vlabs-result-card__label">Voltage</div>

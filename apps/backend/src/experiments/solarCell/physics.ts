@@ -36,16 +36,27 @@ function findOperatingPoint(curve: SolarCurvePoint[], totalResistance: number): 
 
 export function computeSolarCell(input: SolarCellInput): SolarCellResult {
   const lightIntensity = clamp(input.lightIntensity, 20, 150);
-  const rheostatResistance = clamp(input.rheostatResistance, 1, 120);
   const loadResistance = clamp(input.loadResistance, 1, 200);
-  const totalResistance = rheostatResistance + loadResistance;
+  const keyClosed = input.keyClosed;
 
   const lightFactor = lightIntensity / 100;
   const isc = SOLAR_MODEL_CONSTANTS.iscBase * lightFactor;
   const voc = SOLAR_MODEL_CONSTANTS.vocBase * (0.94 + 0.06 * lightFactor);
 
   const ivCurve = buildIvCurve(isc, voc);
-  const operatingPoint = findOperatingPoint(ivCurve, totalResistance);
+
+  if (!keyClosed) {
+    return {
+      voltage: Number(voc.toFixed(4)),
+      current: 0,
+      power: 0,
+      efficiency: 0,
+      ivCurve,
+      pvCurve: ivCurve,
+    };
+  }
+
+  const operatingPoint = findOperatingPoint(ivCurve, loadResistance);
   const power = operatingPoint.voltage * operatingPoint.current;
 
   const inputPower = (lightIntensity * 10) * SOLAR_MODEL_CONSTANTS.panelAreaM2; // W/m2 -> rough W

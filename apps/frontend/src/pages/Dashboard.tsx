@@ -11,7 +11,7 @@ const sessions = [
   { id: 5, code: 'Session 05', title: 'Determination of Creep Constant', path: '/experiments/creep', available: true },
   { id: 6, code: 'Session 06', title: 'Determination of Hall Coefficient Using Hall Effect', path: '', available: false },
   { id: 7, code: 'Session 07', title: 'Determination of Planck\'s Constant', path: '', available: false },
-  { id: 8, code: 'Session 08', title: 'Solar Cell Characteristics', path: '/experiments/solar-cell-characteristics', available: true },
+  { id: 8, code: 'Session 08', title: 'Solar Cell Fill Factor — Characteristics', path: '/experiments/solar-cell-characteristics', available: true },
   { id: 9, code: 'Session 09', title: 'Determination of Wavelength of Laser by Grating', path: '', available: false },
   { id: 10, code: 'Session 10', title: 'Determination of Acceptance Angle and Numerical Aperture Using Fiber Optic Cable', path: '', available: false },
   { id: 11, code: 'Session 11', title: 'Determination of Energy Band Gap of a Given Material', path: '', available: false },

@@ -25,10 +25,9 @@ ChartJS.register(
 
 interface CreepChartProps {
   simulationData: any;
-  materialType: string;
 }
 
-export function CreepChart({ simulationData, materialType }: CreepChartProps) {
+export function CreepChart({ simulationData }: CreepChartProps) {
   const graph1Data = useMemo(() => {
     if (!simulationData?.history) return null;
 

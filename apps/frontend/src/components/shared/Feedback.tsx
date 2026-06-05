@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Box, TextField, Button, Alert, Snackbar } from '@mui/material';
 
 interface FeedbackProps {
   placeholder?: string;
@@ -19,57 +20,44 @@ export function Feedback({ placeholder = 'Share your feedback...', buttonText = 
       });
       setSubmitted(true);
       setText('');
-      setTimeout(() => setSubmitted(false), 3000);
     } catch {
       console.error('Failed to submit feedback');
     }
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <textarea
+    <Box sx={{ p: 2.5 }}>
+      <TextField
+        fullWidth
+        multiline
         rows={3}
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={placeholder}
-        style={{
-          width: '100%',
-          padding: '10px 12px',
-          borderRadius: '8px',
-          border: '0.5px solid #e0e0e0',
-          background: '#f9f9f9',
-          fontSize: '14px',
-          color: '#111',
-          resize: 'vertical',
-          outline: 'none',
-          fontFamily: 'inherit',
-          marginBottom: '10px',
-        }}
+        variant="outlined"
+        sx={{ mb: 2 }}
       />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <button
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Button
+          variant="contained"
           onClick={handleSubmit}
           disabled={!text.trim()}
-          style={{
-            padding: '8px 20px',
-            borderRadius: '6px',
-            fontSize: '13px',
-            fontWeight: 500,
-            border: 'none',
-            background: text.trim() ? '#4f46e5' : '#e5e7eb',
-            color: text.trim() ? '#fff' : '#9ca3af',
-            cursor: text.trim() ? 'pointer' : 'not-allowed',
-            transition: 'all 0.15s',
-          }}
+          size="medium"
         >
           {buttonText}
-        </button>
-        {submitted && (
-          <span style={{ fontSize: '13px', color: '#166534' }}>
-            Feedback submitted!
-          </span>
-        )}
-      </div>
-    </div>
+        </Button>
+      </Box>
+      <Snackbar 
+        open={submitted} 
+        autoHideDuration={3000} 
+        onClose={() => setSubmitted(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="success" variant="filled" sx={{ width: '100%' }}>
+          Feedback submitted successfully!
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 }
+

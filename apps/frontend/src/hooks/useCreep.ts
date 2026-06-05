@@ -44,7 +44,7 @@ export function useCreep(defaults: UseCreepParams) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<any>(null);
+  const [data] = useState<any>(null);
 
   const runSimulation = useCallback(() => {
     setLoading(true);
@@ -75,7 +75,6 @@ export function useCreep(defaults: UseCreepParams) {
       });
 
       let previousLength = initialLength;
-      let snapped = false;
 
       for (let step = 1; step <= numberOfSteps; step++) {
         const t = step * intervalInSeconds;
@@ -87,7 +86,6 @@ export function useCreep(defaults: UseCreepParams) {
         const deltaLOverLt = totalElongation / currentLength;
 
         if (deltaLOverL0 >= props.snapThreshold) {
-          snapped = true;
           history.push({
             timeMinutes: t / 60,
             timeSeconds: t,

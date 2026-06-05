@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { MuiThemeProvider } from './context/MuiThemeProvider';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
@@ -8,6 +9,9 @@ import { Dashboard } from './pages/Dashboard';
 import { OhmsLaw } from './experiments/ohmsLaw/OhmsLaw';
 import { Creep } from './experiments/creep/Creep';
 import { SolarCellCharacteristics } from './experiments/solarCell/SolarCellCharacteristics';
+import { CustomCursor, AmbientEnvironment, PageTransition } from './components/ui';
+import { useSmoothScroll } from './hooks/useSmoothScroll';
+import { AnimatePresence } from 'framer-motion';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -16,61 +20,82 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
+  const location = useLocation();
+  
+  // Initialize Lenis smooth scroll globally
+  useSmoothScroll();
+
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/experiments/ohms-law"
-        element={
-          <ProtectedRoute>
-            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
-              <OhmsLaw />
-            </div>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/experiments/creep"
-        element={
-          <ProtectedRoute>
-            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
-              <Creep />
-            </div>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/experiments/solar-cell-characteristics"
-        element={
-          <ProtectedRoute>
-            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
-              <SolarCellCharacteristics />
-            </div>
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+    <>
+      <CustomCursor />
+      <AmbientEnvironment />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
+          <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
+          <Route path="/signup" element={<PageTransition><SignupPage /></PageTransition>} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <Dashboard />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/experiments/ohms-law"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+                    <OhmsLaw />
+                  </div>
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/experiments/creep"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+                    <Creep />
+                  </div>
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/experiments/solar-cell-characteristics"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+                    <SolarCellCharacteristics />
+                  </div>
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AnimatePresence>
+    </>
   );
 }
 
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </AuthProvider>
+      <MuiThemeProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </AuthProvider>
+      </MuiThemeProvider>
     </ThemeProvider>
   );
 }

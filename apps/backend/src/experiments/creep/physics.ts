@@ -1,4 +1,4 @@
-import { CreepInput, CreepResult, CreepFrame } from './types';
+import type { CreepInput, CreepResult, CreepFrame } from './types';
 import { MATERIAL_PROPERTIES } from './constants';
 
 export function runCreepSimulation(input: CreepInput): CreepResult {

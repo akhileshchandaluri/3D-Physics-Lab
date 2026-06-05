@@ -122,7 +122,7 @@ export function SolarGraphs({ readings, showData, compact = false }: SolarGraphs
         },
         tooltip: {
           callbacks: {
-            label: (ctx: { parsed: { x: number; y: number }; dataset: { label?: string } }) =>
+            label: (ctx: any) =>
               `${ctx.dataset.label}: (${ctx.parsed.x.toFixed(3)}, ${ctx.parsed.y.toFixed(3)})`,
           },
         },

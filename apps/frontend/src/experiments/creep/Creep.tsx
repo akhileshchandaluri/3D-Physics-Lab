@@ -431,7 +431,6 @@ function SimulationSection({
               <div className="exp-simulation__panel-label">Graphs</div>
               <CreepChart
                 simulationData={simulationData}
-                materialType={materialType}
               />
             </div>
           )}

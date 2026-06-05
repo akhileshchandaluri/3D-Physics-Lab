@@ -1,6 +1,6 @@
 import { useRef, useMemo, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, OrbitControls, Html } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { useGLTF, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 function CreepModel({ materialType, initialLength, elongation, hasSnapped }: {

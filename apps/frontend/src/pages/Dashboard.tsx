@@ -1,7 +1,89 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Button, 
+  Avatar, 
+  Grid, 
+  CardContent, 
+  IconButton,
+  Chip
+} from '@mui/material';
+import { 
+  LightMode, 
+  DarkMode, 
+  Logout, 
+  LockOutlined, 
+  Launch 
+} from '@mui/icons-material';
+import { motion } from 'framer-motion';
+import { 
+  ScientificHUD, 
+  TiltCard, 
+  ScrollReveal, 
+  StaggerContainer, 
+  Magnetic 
+} from '../components/ui';
 import './Dashboard.css';
+
+// Small inline wave previews for available experiments on the dashboard
+function MiniExperimentPreview({ id }: { id: number }) {
+  if (id === 1) { // Ohm's Law
+    return (
+      <Box sx={{ height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px dashed rgba(99, 102, 241, 0.2)', borderRadius: 2.5, p: 0.5, mb: 2 }}>
+        <svg width="100%" height="30" style={{ overflow: 'visible' }}>
+          <line x1="0" y1="15" x2="100%" y2="15" stroke="rgba(99,102,241,0.15)" strokeWidth="2" strokeDasharray="5 5" />
+          <motion.line
+            x1="0" y1="15" x2="100%" y2="15"
+            stroke="rgba(99,102,241,0.85)"
+            strokeWidth="2"
+            strokeDasharray="10 15"
+            animate={{ strokeDashoffset: [-50, 0] }}
+            transition={{ repeat: Infinity, ease: 'linear', duration: 1.5 }}
+          />
+        </svg>
+      </Box>
+    );
+  }
+  if (id === 5) { // Creep
+    return (
+      <Box sx={{ height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px dashed rgba(16, 185, 129, 0.2)', borderRadius: 2.5, p: 0.5, mb: 2 }}>
+        <svg width="100%" height="30" viewBox="0 0 150 30" preserveAspectRatio="none">
+          <motion.path
+            d="M0,25 L25,18 Q40,15 80,10 L150,2"
+            fill="none"
+            stroke="rgba(16, 185, 129, 0.85)"
+            strokeWidth="2"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: [0, 1] }}
+            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut', repeatDelay: 0.5 }}
+          />
+        </svg>
+      </Box>
+    );
+  }
+  if (id === 8) { // Solar Cell
+    return (
+      <Box sx={{ height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px dashed rgba(249, 115, 22, 0.2)', borderRadius: 2.5, p: 0.5, mb: 2 }}>
+        <svg width="100%" height="30" viewBox="0 0 150 30" preserveAspectRatio="none">
+          <motion.path
+            d="M5,5 L100,5 Q120,5 130,25 L132,30"
+            fill="none"
+            stroke="rgba(249, 115, 22, 0.85)"
+            strokeWidth="2"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: [0, 1] }}
+            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut', repeatDelay: 0.5 }}
+          />
+        </svg>
+      </Box>
+    );
+  }
+  return null;
+}
 
 const sessions = [
   { id: 1, code: 'Session 01', title: 'Introductory Session — Ohm\'s Law', path: '/experiments/ohms-law', available: true },
@@ -28,112 +110,237 @@ export function Dashboard() {
   };
 
   return (
-    <div className="dashboard">
-      {/* Background */}
-      <div className="dash-bg">
-        <div className="dash-orb dash-orb-1" />
-        <div className="dash-orb dash-orb-2" />
-      </div>
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default', pb: 8 }}>
+      {/* Top Header */}
+      <Box 
+        component="header" 
+        sx={{ 
+          borderBottom: '1px solid', 
+          borderColor: 'divider',
+          backgroundColor: (theme) => theme.palette.mode === 'dark' 
+            ? 'rgba(10, 10, 26, 0.8)' 
+            : 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(20px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 72 }}>
+            <Link to="/" className="dash-brand" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <img src="/klulogo.png" alt="KLU Logo" style={{ height: 40 }} />
+              <Typography variant="h6" sx={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>
+                Virtual Labs
+              </Typography>
+            </Link>
 
-      {/* Top bar */}
-      <header className="dash-header">
-        <div className="dash-header-inner">
-          <Link to="/" className="dash-brand">
-            <img src="/klulogo.png" alt="KLU Logo" className="brand-logo-img" />
-            <span>Virtual Labs</span>
-          </Link>
-          <div className="dash-user-area">
-            <div className="dash-avatar">{user?.name?.[0]?.toUpperCase() ?? 'U'}</div>
-            <div className="dash-user-info">
-              <span className="dash-user-name">{user?.name ?? 'Student'}</span>
-              <span className="dash-user-email">{user?.email ?? ''}</span>
-            </div>
-            <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
-              {theme === 'light' ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-              ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-              )}
-            </button>
-            <button className="dash-logout" onClick={handleLogout}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-              Log Out
-            </button>
-          </div>
-        </div>
-      </header>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Avatar sx={{ bgcolor: 'primary.main', fontWeight: 600 }}>
+                  {user?.name?.[0]?.toUpperCase() ?? 'U'}
+                </Avatar>
+                <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                  <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>
+                    {user?.name ?? 'Student'}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                    {user?.email ?? ''}
+                  </Typography>
+                </Box>
+              </Box>
 
-      {/* Main content */}
-      <main className="dash-main">
-        <div className="dash-main-inner">
-          {/* Welcome */}
-          <div className="dash-welcome">
-            <div>
-              <h1 className="dash-title">Lab Sessions</h1>
-              <p className="dash-subtitle">Select an experiment to begin your virtual lab session</p>
-            </div>
-            <div className="dash-stats-row">
-              <div className="dash-mini-stat">
-                <span className="dash-mini-val">11</span>
-                <span className="dash-mini-label">Total Sessions</span>
-              </div>
-              <div className="dash-mini-stat">
-                <span className="dash-mini-val">3</span>
-                <span className="dash-mini-label">Available</span>
-              </div>
-              <div className="dash-mini-stat">
-                <span className="dash-mini-val">8</span>
-                <span className="dash-mini-label">Coming Soon</span>
-              </div>
-            </div>
-          </div>
+              <IconButton onClick={toggleTheme} color="inherit">
+                {theme === 'light' ? <DarkMode /> : <LightMode />}
+              </IconButton>
 
-          {/* Sessions list */}
-          <div className="sessions-list">
-            {sessions.map((s, i) => (
-              <div
-                key={s.id}
-                className={`session-card ${s.available ? 'session-available' : 'session-locked'}`}
-                style={{ animationDelay: `${i * 0.05}s` }}
+              <Magnetic strength={0.2}>
+                <Button 
+                  variant="outlined" 
+                  color="error" 
+                  startIcon={<Logout />} 
+                  onClick={handleLogout}
+                  size="small"
+                >
+                  Log Out
+                </Button>
+              </Magnetic>
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* Main Body */}
+      <Container maxWidth="lg" sx={{ mt: 5 }}>
+        
+        {/* Real-time Scientific HUD telemetry bar */}
+        <ScientificHUD />
+
+        {/* Welcome and stats */}
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: { xs: 'flex-start', md: 'center' },
+            flexDirection: { xs: 'column', md: 'row' },
+            gap: 3,
+            mb: 5 
+          }}
+        >
+          <Box>
+            <Typography variant="h4" sx={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>
+              Lab Sessions
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Select an experiment to begin your virtual lab session
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {[
+              { val: '11', label: 'Total' },
+              { val: '3', label: 'Live' },
+              { val: '8', label: 'Soon' }
+            ].map((stat, idx) => (
+              <TiltCard 
+                key={idx} 
+                maxRotation={3}
+                hoverEffect={true}
+                sx={{ 
+                  p: '8px 16px', 
+                  borderRadius: 3,
+                  minWidth: 90,
+                  textAlign: 'center',
+                  backgroundColor: 'background.paper',
+                }}
               >
-                <div className="session-number">
-                  <span>{String(s.id).padStart(2, '0')}</span>
-                </div>
-
-                <div className="session-info">
-                  <span className="session-code">{s.code}</span>
-                  <h3 className="session-title">{s.title}</h3>
-                </div>
-
-                <div className="session-action">
-                  {s.available ? (
-                    <span className="session-status status-live">
-                      <span className="status-pulse" />
-                      Live
-                    </span>
-                  ) : (
-                    <span className="session-status status-soon">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                      Coming Soon
-                    </span>
-                  )}
-
-                  {s.available ? (
-                    <Link to={s.path} className="session-launch-btn">
-                      Launch Simulation
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </Link>
-                  ) : (
-                    <span className="session-launch-btn disabled">
-                      Not Available Yet
-                    </span>
-                  )}
-                </div>
-              </div>
+                <Typography variant="h6" color="primary.main" sx={{ fontWeight: 700, fontFamily: 'Roboto Mono' }}>
+                  {stat.val}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
+                  {stat.label}
+                </Typography>
+              </TiltCard>
             ))}
-          </div>
-        </div>
-      </main>
-    </div>
+          </Box>
+        </Box>
+
+        {/* Experiment grid */}
+        <StaggerContainer>
+          <Grid container spacing={3}>
+            {sessions.map((s, idx) => (
+              <Grid 
+                size={{ xs: 12, sm: 6, md: 4 }} 
+                key={s.id}
+              >
+                <ScrollReveal direction="up" delay={idx * 0.04} distance={20}>
+                  <TiltCard 
+                    maxRotation={6}
+                    hoverEffect={s.available}
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      borderRadius: 4,
+                      opacity: s.available ? 1 : 0.7,
+                      backgroundColor: (theme) => theme.palette.mode === 'dark' 
+                        ? 'rgba(20, 20, 40, 0.35)' 
+                        : 'rgba(255, 255, 255, 0.85)',
+                      backdropFilter: 'blur(10px)'
+                    }}
+                  >
+                    <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Chip 
+                          label={s.code} 
+                          size="small" 
+                          color={s.available ? 'primary' : 'default'}
+                          variant={s.available ? 'filled' : 'outlined'}
+                          sx={{ fontWeight: 600, borderRadius: 2 }}
+                        />
+                        {s.available ? (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Box 
+                              sx={{ 
+                                width: 8, 
+                                height: 8, 
+                                borderRadius: '50%', 
+                                bgcolor: 'success.main',
+                                boxShadow: '0 0 8px #10b981',
+                              }}
+                              component={motion.div}
+                              animate={{ scale: [1, 1.3, 1], opacity: [0.6, 1, 0.6] }}
+                              transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+                            />
+                            <Typography variant="caption" color="success.main" sx={{ fontWeight: 600 }}>
+                              Live
+                            </Typography>
+                          </Box>
+                        ) : (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.disabled' }}>
+                            <LockOutlined sx={{ fontSize: 14 }} />
+                            <Typography variant="caption" sx={{ fontWeight: 500 }}>
+                              Locked
+                            </Typography>
+                          </Box>
+                        )}
+                      </Box>
+
+                      <Typography 
+                        variant="h6" 
+                        color="text.primary" 
+                        sx={{ 
+                          lineHeight: 1.4, 
+                          mb: s.available ? 2 : 'auto',
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontWeight: 700
+                        }}
+                      >
+                        {s.title}
+                      </Typography>
+
+                      {/* Small visual preview graph details for available experiments */}
+                      <MiniExperimentPreview id={s.id} />
+
+                      <Box sx={{ mt: 'auto' }}>
+                        {s.available ? (
+                          <Magnetic strength={0.15}>
+                            <Button
+                              component={Link}
+                              to={s.path}
+                              fullWidth
+                              variant="contained"
+                              endIcon={<Launch />}
+                              sx={{ 
+                                py: 1, 
+                                borderRadius: 2.5
+                              }}
+                            >
+                              Launch Simulation
+                            </Button>
+                          </Magnetic>
+                        ) : (
+                          <Button
+                            fullWidth
+                            disabled
+                            variant="outlined"
+                            sx={{ 
+                              py: 1, 
+                              borderRadius: 2.5
+                            }}
+                          >
+                            Coming Soon
+                          </Button>
+                        )}
+                      </Box>
+                    </CardContent>
+                  </TiltCard>
+                </ScrollReveal>
+              </Grid>
+            ))}
+          </Grid>
+        </StaggerContainer>
+      </Container>
+    </Box>
   );
 }

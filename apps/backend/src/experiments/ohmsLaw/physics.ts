@@ -1,6 +1,5 @@
-// src/experiments/ohmsLaw/physics.ts
-import type { OhmsInput, OhmsResult, IVCurveDataPoint } from './types';
-import { ALPHA_COPPER, T_ROOM, MAX_CURRENT_FOR_GLOW } from './constants';
+import type { OhmsInput, OhmsResult, IVCurveDataPoint } from './types.js';
+import { ALPHA_COPPER, T_ROOM, MAX_CURRENT_FOR_GLOW } from './constants.js';
 
 export function computeOhmsLaw(input: OhmsInput): OhmsResult {
   const { voltage, resistance, temperature } = input;

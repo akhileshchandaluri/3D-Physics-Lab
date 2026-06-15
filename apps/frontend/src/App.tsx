@@ -9,7 +9,7 @@ import { Dashboard } from './pages/Dashboard';
 import { OhmsLaw } from './experiments/ohmsLaw/OhmsLaw';
 import { Creep } from './experiments/creep/Creep';
 import { SolarCellCharacteristics } from './experiments/solarCell/SolarCellCharacteristics';
-import { CustomCursor, AmbientEnvironment, PageTransition } from './components/ui';
+import { AmbientEnvironment, PageTransition } from './components/ui';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { AnimatePresence } from 'framer-motion';
 
@@ -27,7 +27,6 @@ function AppRoutes() {
 
   return (
     <>
-      <CustomCursor />
       <AmbientEnvironment />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>

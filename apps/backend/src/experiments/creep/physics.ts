@@ -1,5 +1,5 @@
-import type { CreepInput, CreepResult, CreepFrame } from './types';
-import { MATERIAL_PROPERTIES } from './constants';
+import type { CreepInput, CreepResult, CreepFrame } from './types.js';
+import { MATERIAL_PROPERTIES } from './constants.js';
 
 export function runCreepSimulation(input: CreepInput): CreepResult {
   const props = MATERIAL_PROPERTIES[input.materialType];

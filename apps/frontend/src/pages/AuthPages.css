@@ -127,12 +127,6 @@
   height: 20px;
 }
 
-.auth-logo-img {
-  height: 36px;
-  width: auto;
-  object-fit: contain;
-}
-
 .auth-brand-title {
   font-family: var(--font-display);
   font-size: 28px;
@@ -219,6 +213,42 @@
   font-size: 13px;
   margin-bottom: 20px;
   animation: fadeIn 0.3s ease;
+}
+
+.field-error-text {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.input-wrapper input.input-error {
+  border-color: #ef4444 !important;
+}
+
+.auth-notice-box {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.auth-retry-btn {
+  margin-left: auto;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
 }
 
 /* Form */

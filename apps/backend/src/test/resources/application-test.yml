@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:physim_test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  flyway:
+    enabled: false
+
+app:
+  security:
+    cookie-name: physim_session
+    cookie-secret: test_secret_key_32_characters_long_for_testing!
+    session-ttl-days: 7
+    cors:
+      allowed-origins: http://localhost:5173
+  admin:
+    initial-email: admin@physim.edu
+    initial-password: AdminPassword123!
+    initial-name: System Administrator
+  oauth2:
+    google:
+      client-id: test-google-client-id.apps.googleusercontent.com
+      client-secret: test-google-client-secret
+      redirect-uri: http://localhost:5173/oauth/callback
+      allowed-redirect-uris: http://localhost:5173/oauth/callback
+
+logging:
+  level:
+    root: WARN
+    com.physim: INFO

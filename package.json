@@ -1,1 +1,33 @@
-{"name":"kl-physics-lab","version":"1.0.0","private":true,"description":"KL Physics Virtual Lab (Monorepo)","workspaces":["apps/*","packages/*"],"scripts":{"dev":"npm run dev --workspace=apps/frontend","build":"npm run build --workspaces","lint":"eslint .","format":"prettier --write .","test":"npm run test --workspaces"},"keywords":["physics","virtual-lab","react","node","monorepo"],"author":"","license":"ISC","dependencies":{"@esbuild/win32-x64":"^0.27.7"}}
+{
+  "name": "kl-physics-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KL Physics Virtual Lab (Monorepo - Java Spring Boot Backend + React Frontend)",
+  "workspaces": [
+    "apps/frontend",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:frontend",
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "dev:backend": "mvn -f apps/backend/pom.xml spring-boot:run",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "npm run build --workspace=apps/frontend",
+    "build:backend": "mvn -f apps/backend/pom.xml clean package -DskipTests",
+    "test": "npm run test:backend",
+    "test:backend": "mvn -f apps/backend/pom.xml test",
+    "test:frontend": "npm run test --workspace=apps/frontend --if-present",
+    "lint": "eslint apps/frontend",
+    "format": "prettier --write apps/frontend"
+  },
+  "keywords": [
+    "physics",
+    "virtual-lab",
+    "react",
+    "spring-boot",
+    "java",
+    "monorepo"
+  ],
+  "author": "",
+  "license": "ISC"
+}

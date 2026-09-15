@@ -1,5 +1,7 @@
 # Dependencies
 node_modules/
+target/
+.mvn/
 
 # Build outputs
 dist/
@@ -17,10 +19,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Environment files
+# Environment and local secret files (Mandatory local only)
 .env
 .env.local
 .env.*.local
+*.local
+application-local.yml
+application-local.properties
+**/application-local.yml
+**/application-local.properties
 
 # Editor & IDE
 .vscode/*
@@ -37,12 +44,10 @@ lerna-debug.log*
 Thumbs.db
 
 # Package manager lock files
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
 # Runtime/misc
-*.local
 .cache
 
 # Skills

@@ -1,101 +1,66 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { MuiThemeProvider } from './context/MuiThemeProvider';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { Dashboard } from './pages/Dashboard';
 import { OhmsLaw } from './experiments/ohmsLaw/OhmsLaw';
-import { Creep } from './experiments/creep/Creep';
-import { SolarCellCharacteristics } from './experiments/solarCell/SolarCellCharacteristics';
-import { CustomCursor, AmbientEnvironment, PageTransition } from './components/ui';
-import { useSmoothScroll } from './hooks/useSmoothScroll';
-import { AnimatePresence } from 'framer-motion';
+
+import { SharedExperimentPage } from './pages/SharedExperimentPage';
+import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-primary)' }}>
+        <span className="spinner" style={{ width: '36px', height: '36px' }} />
+      </div>
+    );
+  }
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
 
 function AppRoutes() {
-  const location = useLocation();
-  
-  // Initialize Lenis smooth scroll globally
-  useSmoothScroll();
-
   return (
-    <>
-      <CustomCursor />
-      <AmbientEnvironment />
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
-          <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
-          <Route path="/signup" element={<PageTransition><SignupPage /></PageTransition>} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <PageTransition>
-                  <Dashboard />
-                </PageTransition>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/experiments/ohms-law"
-            element={
-              <ProtectedRoute>
-                <PageTransition>
-                  <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
-                    <OhmsLaw />
-                  </div>
-                </PageTransition>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/experiments/creep"
-            element={
-              <ProtectedRoute>
-                <PageTransition>
-                  <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
-                    <Creep />
-                  </div>
-                </PageTransition>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/experiments/solar-cell-characteristics"
-            element={
-              <ProtectedRoute>
-                <PageTransition>
-                  <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
-                    <SolarCellCharacteristics />
-                  </div>
-                </PageTransition>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </AnimatePresence>
-    </>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+      <Route path="/share/:token" element={<SharedExperimentPage />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/experiments/ohms-law"
+        element={
+          <ProtectedRoute>
+            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+              <OhmsLaw />
+            </div>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }
 
 function App() {
   return (
     <ThemeProvider>
-      <MuiThemeProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </AuthProvider>
-      </MuiThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

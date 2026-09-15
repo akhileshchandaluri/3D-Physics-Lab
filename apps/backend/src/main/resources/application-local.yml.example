@@ -1,0 +1,29 @@
+# Example local configuration file.
+# Copy this file to application-local.yml and customize with your local secrets.
+# application-local.yml is ignored by git and must never be committed.
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/physim_db
+    username: postgres
+    password: YOUR_POSTGRES_PASSWORD_HERE
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+app:
+  security:
+    cookie-name: physim_session
+    cookie-secret: replace_with_a_secure_random_32_character_secret_key!
+    session-ttl-days: 30
+  oauth2:
+    google:
+      client-id: YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com
+      client-secret: YOUR_GOOGLE_CLIENT_SECRET_HERE
+      redirect-uri: http://localhost:5173/oauth/callback
+      allowed-redirect-uris: http://localhost:5173/oauth/callback,http://localhost:5174/oauth/callback,http://127.0.0.1:5173/oauth/callback,http://127.0.0.1:5174/oauth/callback
+

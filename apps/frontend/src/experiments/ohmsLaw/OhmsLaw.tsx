@@ -1,366 +1,38 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useOhmsLaw } from '../../hooks/useOhmsLaw';
+import { ExperimentLayout } from '../../components/shared/ExperimentLayout';
+import { SliderInput } from '../../components/shared/SliderInput';
+import { ResultCard } from '../../components/shared/ResultCard';
+import { FormulaBar } from '../../components/shared/FormulaBar';
 import { CircuitDiagram } from './CircuitDiagram';
 import { IVChart } from './IVChart';
-import './OhmsLaw.css';
 
-const sidebarTabs = [
-  'Introduction',
-  'Objective',
-  'Theory',
-  'Formula',
-  'Simulation',
-  'Conclusion',
-  'Feedback',
-];
+const AtomIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z"/><path d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z"/></svg>
+);
 
-/* ── Navbar ── */
-function ExperimentNavbar() {
-  const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
-  return (
-    <nav className="exp-navbar">
-      <a className="exp-navbar__logo" href="/">
-        <div className="exp-navbar__logo-icon">KL</div>
-        <div className="exp-navbar__logo-text">
-          <span className="exp-navbar__logo-title">Virtual Labs</span>
-          <span className="exp-navbar__logo-subtitle">KL University</span>
-        </div>
-      </a>
-      <div className="exp-navbar__links">
-        <button
-          className="exp-navbar__link exp-navbar__theme-btn"
-          onClick={toggleTheme}
-          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          {theme === 'light' ? (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="1" y1="12" x2="3" y2="12" />
-              <line x1="21" y1="12" x2="23" y2="12" />
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-            </svg>
-          ) : (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          )}
-        </button>
-        <button
-          className="exp-navbar__link exp-navbar__link--back"
-          onClick={() => navigate('/dashboard')}
-        >
-          ← Dashboard
-        </button>
-        <button className="exp-navbar__link" onClick={() => navigate('/')}>
-          Home
-        </button>
-      </div>
-    </nav>
-  );
-}
-
-/* ── Content Sections ── */
-function SectionContent({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="vlabs-section">
-      <h2 className="vlabs-section__title">{title}</h2>
-      <div className="vlabs-section__body">{text}</div>
-    </div>
-  );
-}
-
-function FeedbackSection() {
-  const [text, setText] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = async () => {
-    if (!text.trim()) return;
-    try {
-      await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ experiment_slug: 'ohms-law', message: text }),
-      });
-    } catch {
-      // silently handle
-    }
-    setSubmitted(true);
-    setText('');
-    setTimeout(() => setSubmitted(false), 3000);
+interface OhmsLawProps {
+  initialParameters?: {
+    voltage?: number;
+    resistance?: number;
+    temperature?: number;
   };
-
-  return (
-    <div className="vlabs-feedback">
-      <h2 className="vlabs-feedback__title">Feedback</h2>
-      <textarea
-        className="vlabs-feedback__textarea"
-        rows={4}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Share your feedback about this experiment…"
-      />
-      <div className="vlabs-feedback__actions">
-        <button
-          className="vlabs-feedback__btn"
-          onClick={handleSubmit}
-          disabled={!text.trim()}
-        >
-          Submit Feedback
-        </button>
-        {submitted && <span className="vlabs-feedback__success">✓ Feedback submitted!</span>}
-      </div>
-    </div>
-  );
+  isReadOnly?: boolean;
 }
 
-/* ── Reading row type ── */
-interface Reading {
-  id: number;
-  voltage: number;
-  resistance: number;
-  effectiveResistance: number;
-  currentMa: number;
-  power: number;
-  temperature: number;
-}
+export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps) {
+  const [searchParams] = useSearchParams();
+  const savedIdParam = searchParams.get('savedId');
 
-/* ── Simulation Tab ── */
-function SimulationSection({
-  voltage, setVoltage,
-  resistance, setResistance,
-  temperature, setTemperature,
-  currentMa, effectiveResistance, power,
-  brightnessRatio, ivCurve,
-}: any) {
-  const [readings, setReadings] = useState<Reading[]>([]);
+  const [currentSavedId, setCurrentSavedId] = useState<string | null>(savedIdParam);
+  const [saveTitle, setSaveTitle] = useState("My Ohm's Law Setup");
+  const [saveNotes, setSaveNotes] = useState('');
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [enableAutosave, setEnableAutosave] = useState(false);
 
-  const addReading = () => {
-    setReadings(prev => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        voltage,
-        resistance,
-        effectiveResistance,
-        currentMa,
-        power,
-        temperature,
-      },
-    ]);
-  };
-
-  const clearReadings = () => setReadings([]);
-
-  const removeReading = (id: number) => {
-    setReadings(prev => {
-      const filtered = prev.filter(r => r.id !== id);
-      // Re-number sequentially
-      return filtered.map((r, i) => ({ ...r, id: i + 1 }));
-    });
-  };
-
-  return (
-    <div className="exp-simulation">
-      <div className="exp-simulation__header">
-        <span className="exp-simulation__session">Session 02</span>
-        <h2 className="exp-simulation__title">Ohm's Law Simulator</h2>
-      </div>
-
-      <div className="exp-simulation__grid">
-        {/* Controls Panel */}
-        <div className="exp-simulation__panel">
-          <div className="exp-simulation__panel-label">Controls</div>
-
-          <div className="vlabs-slider">
-            <span className="vlabs-slider__label">Voltage</span>
-            <input
-              className="vlabs-slider__input"
-              type="range"
-              min={0} max={24} step={0.5}
-              value={voltage}
-              onChange={e => setVoltage(parseFloat(e.target.value))}
-            />
-            <span className="vlabs-slider__value">{voltage} V</span>
-          </div>
-
-          <div className="vlabs-slider">
-            <span className="vlabs-slider__label">Resistance</span>
-            <input
-              className="vlabs-slider__input"
-              type="range"
-              min={10} max={1000} step={10}
-              value={resistance}
-              onChange={e => setResistance(parseFloat(e.target.value))}
-            />
-            <span className="vlabs-slider__value">{resistance} Ω</span>
-          </div>
-
-          <div className="vlabs-slider">
-            <span className="vlabs-slider__label">Temperature</span>
-            <input
-              className="vlabs-slider__input"
-              type="range"
-              min={25} max={200} step={5}
-              value={temperature}
-              onChange={e => setTemperature(parseFloat(e.target.value))}
-            />
-            <span className="vlabs-slider__value">{temperature} °C</span>
-          </div>
-
-          <div style={{ marginTop: '20px' }}>
-            <div className="exp-simulation__panel-label">Circuit Diagram</div>
-            <CircuitDiagram
-              brightnessRatio={brightnessRatio}
-              voltage={voltage}
-              resistance={resistance}
-            />
-          </div>
-        </div>
-
-        {/* Visualization Panel */}
-        <div className="exp-simulation__panel">
-          <div className="exp-simulation__panel-label">I-V Characteristic</div>
-          <IVChart
-            ivCurve={ivCurve}
-            resistance={resistance}
-            temperature={temperature}
-          />
-        </div>
-      </div>
-
-      {/* Result Cards + Record Button */}
-      <div className="exp-simulation__results-row">
-        <div className="exp-simulation__results">
-          <div className="vlabs-result-card">
-            <div className="vlabs-result-card__label">Voltage</div>
-            <div className="vlabs-result-card__value">
-              <span className="vlabs-result-card__number">{voltage.toFixed(1)}</span>
-              <span className="vlabs-result-card__unit">V</span>
-            </div>
-          </div>
-          <div className="vlabs-result-card vlabs-result-card--highlight">
-            <div className="vlabs-result-card__label">Current</div>
-            <div className="vlabs-result-card__value">
-              <span className="vlabs-result-card__number">{currentMa.toFixed(2)}</span>
-              <span className="vlabs-result-card__unit">mA</span>
-            </div>
-          </div>
-          <div className="vlabs-result-card">
-            <div className="vlabs-result-card__label">Resistance (eff.)</div>
-            <div className="vlabs-result-card__value">
-              <span className="vlabs-result-card__number">{Math.round(effectiveResistance)}</span>
-              <span className="vlabs-result-card__unit">Ω</span>
-            </div>
-          </div>
-          <div className="vlabs-result-card">
-            <div className="vlabs-result-card__label">Power</div>
-            <div className="vlabs-result-card__value">
-              <span className="vlabs-result-card__number">{power.toFixed(3)}</span>
-              <span className="vlabs-result-card__unit">W</span>
-            </div>
-          </div>
-        </div>
-
-        <button className="vlabs-record-btn" onClick={addReading} id="record-reading-btn">
-          <span className="vlabs-record-btn__icon">+</span>
-          Record Reading
-        </button>
-      </div>
-
-      {/* Formula Bar */}
-      <div className="vlabs-formula-bar">
-        <span>
-          <span className="vlabs-formula-bar__label">Current:&nbsp;</span>
-          <span className="vlabs-formula-bar__expr">I = V / R</span>
-        </span>
-        <span>
-          <span className="vlabs-formula-bar__label">Power:&nbsp;</span>
-          <span className="vlabs-formula-bar__expr">P = V × I</span>
-        </span>
-        <span>
-          <span className="vlabs-formula-bar__label">Temp correction:&nbsp;</span>
-          <span className="vlabs-formula-bar__expr">R(T) = R₀(1 + α·ΔT)</span>
-        </span>
-      </div>
-
-      {/* Observations Table */}
-      <div className="vlabs-observations">
-        <div className="vlabs-observations__header">
-          <h3 className="vlabs-observations__title">
-            Observation Table
-            {readings.length > 0 && (
-              <span className="vlabs-observations__count">{readings.length} reading{readings.length !== 1 ? 's' : ''}</span>
-            )}
-          </h3>
-          {readings.length > 0 && (
-            <button className="vlabs-observations__clear" onClick={clearReadings}>
-              Clear All
-            </button>
-          )}
-        </div>
-
-        {readings.length === 0 ? (
-          <div className="vlabs-observations__empty">
-            <span className="vlabs-observations__empty-icon">📋</span>
-            <p>No readings recorded yet.</p>
-            <p>Adjust the sliders and click <strong>Record Reading</strong> to add an observation.</p>
-          </div>
-        ) : (
-          <div className="vlabs-observations__table-wrap">
-            <table className="vlabs-observations__table">
-              <thead>
-                <tr>
-                  <th>S.No</th>
-                  <th>Voltage (V)</th>
-                  <th>Resistance (Ω)</th>
-                  <th>Eff. Resistance (Ω)</th>
-                  <th>Current (mA)</th>
-                  <th>Power (W)</th>
-                  <th>Temp (°C)</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {readings.map((r) => (
-                  <tr key={r.id} className="vlabs-observations__row">
-                    <td>{r.id}</td>
-                    <td>{r.voltage.toFixed(1)}</td>
-                    <td>{r.resistance}</td>
-                    <td>{Math.round(r.effectiveResistance)}</td>
-                    <td className="vlabs-observations__highlight">{r.currentMa.toFixed(2)}</td>
-                    <td>{r.power.toFixed(3)}</td>
-                    <td>{r.temperature}</td>
-                    <td>
-                      <button
-                        className="vlabs-observations__remove"
-                        onClick={() => removeReading(r.id)}
-                        title="Remove reading"
-                      >
-                        ×
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ===== Main OhmsLaw Component ===== */
-export function OhmsLaw() {
-  const [activeTab, setActiveTab] = useState(0);
   const {
     voltage, setVoltage,
     resistance, setResistance,
@@ -370,98 +42,406 @@ export function OhmsLaw() {
     power,
     brightnessRatio,
     ivCurve,
-    data,
-    loading,
-    error,
-  } = useOhmsLaw({ voltage: 12, resistance: 200, temperature: 25 });
+  } = useOhmsLaw({
+    voltage: initialParameters?.voltage ?? 12,
+    resistance: initialParameters?.resistance ?? 200,
+    temperature: initialParameters?.temperature ?? 25,
+  });
 
-  if (loading) {
-    return (
-      <div style={{ height: '100vh', background: '#fff', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <ExperimentNavbar />
-        <div className="exp-loading">
-          <div className="exp-loading__spinner" />
-          Loading experiment…
-        </div>
-      </div>
-    );
-  }
+  // Track the last successfully saved snapshot to avoid duplicate unchanged database writes
+  const [lastSavedSnapshot, setLastSavedSnapshot] = useState<string>('');
+  const lastSavedSnapshotRef = useRef<string>('');
+  const saveSeqRef = useRef<number>(0);
 
-  if (error) {
-    return (
-      <div style={{ height: '100vh', background: '#fff', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <ExperimentNavbar />
-        <div className="exp-loading" style={{ color: '#e74c3c' }}>Error: {error}</div>
-      </div>
-    );
-  }
+  // Load saved state if savedId is in URL
+  useEffect(() => {
+    if (savedIdParam) {
+      fetch(`/api/v1/experiments/${savedIdParam}`, { credentials: 'include' })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && data.state) {
+            setCurrentSavedId(data.id);
+            setSaveTitle(data.title || "Saved Ohm's Law Setup");
+            setSaveNotes(data.notes || '');
+            if (typeof data.state.voltage === 'number') setVoltage(data.state.voltage);
+            if (typeof data.state.resistance === 'number') setResistance(data.state.resistance);
+            if (typeof data.state.temperature === 'number') setTemperature(data.state.temperature);
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 0:
-        return <SectionContent title="Introduction" text={data?.overview ?? ''} />;
-      case 1:
-        return <SectionContent title="Objective" text={data?.aim ?? ''} />;
-      case 2:
-        return <SectionContent title="Theory" text={data?.theory ?? ''} />;
-      case 3:
-        return <SectionContent title="Formula" text={data?.formula ?? ''} />;
-      case 4:
-        return (
-          <SimulationSection
-            voltage={voltage} setVoltage={setVoltage}
-            resistance={resistance} setResistance={setResistance}
-            temperature={temperature} setTemperature={setTemperature}
-            currentMa={currentMa}
-            effectiveResistance={effectiveResistance}
-            power={power}
-            brightnessRatio={brightnessRatio}
-            ivCurve={ivCurve}
-          />
-        );
-      case 5:
-        return <SectionContent title="Conclusion" text={data?.conclusion ?? ''} />;
-      case 6:
-        return <FeedbackSection />;
-      default:
-        return null;
+            // Establish baseline snapshot
+            const loadedSnapshot = JSON.stringify({
+              title: data.title || "Saved Ohm's Law Setup",
+              notes: data.notes || '',
+              voltage: data.state.voltage,
+              resistance: data.state.resistance,
+              temperature: data.state.temperature,
+            });
+            lastSavedSnapshotRef.current = loadedSnapshot;
+            setLastSavedSnapshot(loadedSnapshot);
+            setSaveStatus('saved');
+          }
+        })
+        .catch(() => {});
+    }
+  }, [savedIdParam, setVoltage, setResistance, setTemperature]);
+
+  const performSave = useCallback(async (isAutosave = false) => {
+    const statePayload = { voltage, resistance, temperature };
+    const currentSnapshot = JSON.stringify({
+      title: saveTitle.trim(),
+      notes: saveNotes.trim(),
+      voltage,
+      resistance,
+      temperature,
+    });
+
+    // Avoid duplicate unchanged writes
+    if (currentSnapshot === lastSavedSnapshotRef.current) {
+      if (!isAutosave) {
+        setSaveStatus('saved');
+        setSaveMessage('All changes saved.');
+      }
+      return;
+    }
+
+    const seq = ++saveSeqRef.current;
+    setSaveStatus('saving');
+    setSaveMessage(null);
+
+    try {
+      let res: Response;
+      if (currentSavedId) {
+        // Update existing saved checkpoint
+        res = await fetch(`/api/v1/experiments/${currentSavedId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            title: saveTitle.trim(),
+            notes: saveNotes.trim(),
+            state: statePayload,
+          }),
+        });
+      } else {
+        // Create new checkpoint
+        res = await fetch('/api/v1/experiments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            experimentId: 'ohms-law',
+            title: saveTitle.trim(),
+            notes: saveNotes.trim(),
+            state: statePayload,
+          }),
+        });
+      }
+
+      // Check if another save request superseded this one
+      if (seq !== saveSeqRef.current) return;
+
+      if (res.ok) {
+        const data = await res.json();
+        if (!currentSavedId && data.id) {
+          setCurrentSavedId(data.id);
+        }
+        lastSavedSnapshotRef.current = currentSnapshot;
+        setLastSavedSnapshot(currentSnapshot);
+        setSaveStatus('saved');
+        setSaveMessage(isAutosave ? 'Autosaved checkpoint.' : 'Experiment setup saved successfully!');
+      } else {
+        setSaveStatus('error');
+        setSaveMessage('Save failed. Click Retry to save your changes.');
+      }
+    } catch {
+      if (seq !== saveSeqRef.current) return;
+      setSaveStatus('error');
+      setSaveMessage('Network error while saving. Click Retry to try again.');
+    }
+  }, [voltage, resistance, temperature, saveTitle, saveNotes, currentSavedId]);
+
+  // Debounced autosave checkpoint: triggers 3 seconds after user stops interacting, if autosave is enabled
+  useEffect(() => {
+    if (!enableAutosave || isReadOnly) return;
+
+    const currentSnapshot = JSON.stringify({
+      title: saveTitle.trim(),
+      notes: saveNotes.trim(),
+      voltage,
+      resistance,
+      temperature,
+    });
+
+    if (currentSnapshot === lastSavedSnapshotRef.current) return;
+
+    const timer = setTimeout(() => {
+      performSave(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [enableAutosave, isReadOnly, voltage, resistance, temperature, saveTitle, saveNotes, performSave]);
+
+  const handleCreateShare = async () => {
+    if (!currentSavedId) {
+      setSaveMessage('Please save your experiment first before creating a share link.');
+      return;
+    }
+    try {
+      const res = await fetch(`/api/v1/experiments/${currentSavedId}/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({}),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const fullUrl = `${window.location.origin}/share/${data.token}`;
+        setShareUrl(fullUrl);
+        navigator.clipboard?.writeText(fullUrl).catch(() => {});
+        setSaveMessage('Share link created and copied to clipboard!');
+      } else {
+        setSaveMessage('Failed to create share link.');
+      }
+    } catch {
+      setSaveMessage('Network error while creating share link.');
     }
   };
 
+  const isCurrentStateDirty = lastSavedSnapshot !== '' &&
+    JSON.stringify({
+      title: saveTitle.trim(),
+      notes: saveNotes.trim(),
+      voltage,
+      resistance,
+      temperature,
+    }) !== lastSavedSnapshot;
+
   return (
-    <div style={{ height: '100vh', background: '#fff', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <ExperimentNavbar />
-
-      {/* Breadcrumb header */}
-      <div className="exp-header">
-        <div className="exp-header__breadcrumb">
-          <a href="/dashboard">Physical Sciences</a>
-          <span className="exp-header__breadcrumb-sep">›</span>
-          <span>Ohm's Law</span>
+    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '16px' }}>
+      {/* Top Header Bar */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'var(--text-primary)', fontWeight: 700, fontSize: '16px' }}>
+            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+              <AtomIcon />
+            </div>
+            <span>PhySim Lab</span>
+          </Link>
+          <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none' }}>
+            ← Back to Dashboard
+          </Link>
         </div>
-        <h1 className="exp-header__title">Ohm's Law Virtual Lab</h1>
+
+        {!isReadOnly && (
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={enableAutosave}
+                onChange={(e) => setEnableAutosave(e.target.checked)}
+              />
+              <span>Autosave</span>
+            </label>
+
+            <input
+              type="text"
+              value={saveTitle}
+              onChange={(e) => setSaveTitle(e.target.value)}
+              placeholder="Experiment Title"
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--border-subtle)', background: 'var(--surface-card)', color: 'var(--text-primary)', fontSize: '13px', width: '180px' }}
+            />
+
+            <button
+              onClick={() => performSave(false)}
+              disabled={saveStatus === 'saving'}
+              id="save-experiment-btn"
+              style={{
+                padding: '7px 16px',
+                background: saveStatus === 'error' ? '#ef4444' : 'var(--gradient-primary)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              {saveStatus === 'saving' ? (
+                <>
+                  <span className="spinner" style={{ width: '14px', height: '14px' }} />
+                  Saving...
+                </>
+              ) : saveStatus === 'error' ? (
+                'Retry Save'
+              ) : currentSavedId ? (
+                'Update Save'
+              ) : (
+                'Save Setup'
+              )}
+            </button>
+
+            {/* Status indicator badge */}
+            <div style={{ fontSize: '12px', fontWeight: 600 }}>
+              {saveStatus === 'saving' && <span style={{ color: 'var(--text-muted)' }}>Saving... ⏳</span>}
+              {saveStatus === 'saved' && <span style={{ color: '#10b981' }}>Saved ✓</span>}
+              {saveStatus === 'error' && <span style={{ color: '#ef4444' }}>Save failed ⚠️</span>}
+              {saveStatus === 'idle' && isCurrentStateDirty && <span style={{ color: 'var(--primary-600)' }}>Unsaved changes •</span>}
+            </div>
+
+            <button
+              onClick={handleCreateShare}
+              style={{ padding: '7px 16px', background: 'var(--toggle-bg)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+            >
+              🔗 Share
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Body: sidebar + content */}
-      <div className="exp-body">
-        <aside className="exp-sidebar">
-          <nav className="exp-sidebar__nav">
-            {sidebarTabs.map((tab, i) => (
+      {saveMessage && (
+        <div style={{
+          padding: '10px 16px',
+          marginBottom: '16px',
+          borderRadius: '8px',
+          background: saveStatus === 'error' ? 'rgba(239, 68, 68, 0.1)' : 'var(--surface-card)',
+          border: `1px solid ${saveStatus === 'error' ? 'rgba(239, 68, 68, 0.3)' : 'var(--border-accent)'}`,
+          color: saveStatus === 'error' ? '#ef4444' : 'var(--primary-600)',
+          fontSize: '13px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <span>
+            {saveMessage}{' '}
+            {shareUrl && (
+              <a href={shareUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-500)', marginLeft: '8px', wordBreak: 'break-all' }}>
+                {shareUrl}
+              </a>
+            )}
+          </span>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            {saveStatus === 'error' && (
               <button
-                key={tab}
-                className={`exp-sidebar__item${activeTab === i ? ' exp-sidebar__item--active' : ''}`}
-                onClick={() => setActiveTab(i)}
+                onClick={() => performSave(false)}
+                style={{
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  border: '1px solid #ef4444',
+                  background: '#ef4444',
+                  color: '#fff',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
               >
-                {tab}
+                Retry
               </button>
-            ))}
-          </nav>
-        </aside>
+            )}
+            <button onClick={() => setSaveMessage(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>✕</button>
+          </div>
+        </div>
+      )}
 
-        <main className="exp-content" key={activeTab}>
-          {renderContent()}
-        </main>
-      </div>
+      <ExperimentLayout
+        sessionNumber="Session 01"
+        title="Ohm's law simulator"
+
+        controls={
+          <>
+            <div style={{
+              fontSize: '12px', fontWeight: 500,
+              color: '#888', marginBottom: '14px'
+            }}>
+              Controls {isReadOnly && '(Read-Only Shared View)'}
+            </div>
+
+            <SliderInput
+              label="Voltage"
+              min={0} max={24} step={0.5}
+              value={voltage} unit="V"
+              onChange={isReadOnly ? () => {} : setVoltage}
+            />
+            <SliderInput
+              label="Resistance"
+              min={10} max={1000} step={10}
+              value={resistance} unit="Ω"
+              onChange={isReadOnly ? () => {} : setResistance}
+            />
+            <SliderInput
+              label="Temperature"
+              min={25} max={200} step={5}
+              value={temperature} unit="°C"
+              onChange={isReadOnly ? () => {} : setTemperature}
+            />
+
+            <div style={{ marginTop: '20px' }}>
+              <div style={{
+                fontSize: '12px', color: '#888', marginBottom: '6px'
+              }}>
+                Circuit diagram
+              </div>
+              <CircuitDiagram
+                brightnessRatio={brightnessRatio}
+                voltage={voltage}
+                resistance={resistance}
+              />
+            </div>
+          </>
+        }
+
+        visualization={
+          <>
+            <div style={{
+              fontSize: '12px', fontWeight: 500,
+              color: '#888', marginBottom: '14px'
+            }}>
+              I-V characteristic
+            </div>
+            <IVChart
+              ivCurve={ivCurve}
+              resistance={resistance}
+              temperature={temperature}
+            />
+          </>
+        }
+
+        results={
+          <>
+            <ResultCard
+              label="Voltage"
+              value={voltage.toFixed(1)}
+              unit="V"
+            />
+            <ResultCard
+              label="Current"
+              value={currentMa.toFixed(2)}
+              unit="mA"
+              highlight
+            />
+            <ResultCard
+              label="Resistance (eff.)"
+              value={Math.round(effectiveResistance)}
+              unit="Ω"
+            />
+            <ResultCard
+              label="Power"
+              value={power.toFixed(3)}
+              unit="W"
+            />
+          </>
+        }
+
+        formula={
+          <FormulaBar formulas={[
+            { label: 'Current', expression: 'I = V / R' },
+            { label: 'Power', expression: 'P = V × I' },
+            { label: 'Temp correction',
+              expression: 'R(T) = R₀(1 + α·ΔT)' },
+          ]} />
+        }
+      />
     </div>
   );
 }

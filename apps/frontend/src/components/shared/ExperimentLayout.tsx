@@ -14,15 +14,15 @@ export function ExperimentLayout({
   controls, visualization, results, formula
 }: ExperimentLayoutProps) {
   return (
-    <div style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
+    <div>
 
       <div style={{ marginBottom: '20px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>
+        <span style={{ fontSize: '12px', color: '#8d1b2e', fontWeight: 600 }}>
           {sessionNumber}
         </span>
         <h1 style={{
           fontSize: '20px', fontWeight: 500,
-          margin: '4px 0 0', color: '#111'
+          margin: '4px 0 0', color: '#212121'
         }}>
           {title}
         </h1>
@@ -34,13 +34,13 @@ export function ExperimentLayout({
         gap: '16px', marginBottom: '16px'
       }}>
         <div style={{
-          background: '#fff', border: '0.5px solid #e0e0e0',
+          background: '#fff', border: '1px solid #e6e6e6',
           borderRadius: '12px', padding: '16px'
         }}>
           {controls}
         </div>
         <div style={{
-          background: '#fff', border: '0.5px solid #e0e0e0',
+          background: '#fff', border: '1px solid #e6e6e6',
           borderRadius: '12px', padding: '16px'
         }}>
           {visualization}

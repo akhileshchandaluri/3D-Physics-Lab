@@ -44,7 +44,7 @@ function AppRoutes() {
         path="/experiments/ohms-law"
         element={
           <ProtectedRoute>
-            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+            <div style={{ minHeight: '100vh', background: '#f4f4f4' }}>
               <OhmsLaw />
             </div>
           </ProtectedRoute>

@@ -19,6 +19,7 @@ import { LabScene } from './scene/LabScene'
 import { PartsTray } from './ui/PartsTray'
 import { SpecimenPanel } from './ui/SpecimenPanel'
 import { SheetView } from './ui/SheetView'
+import { LessonMenu, LessonReading, type LessonId } from './ui/Lesson'
 import styles from './App.module.css'
 import panelStyles from './ui/ui.module.css'
 
@@ -77,6 +78,7 @@ export function CreepConstant({ initialState, isReadOnly = false }: CreepConstan
   const fractureNoted = useRef(false)
   const digitsRef = useRef<HTMLDivElement>(null)
   const [cameraUnlocked, setCameraUnlocked] = useState(false)
+  const [lesson, setLesson] = useState<LessonId>('aim')
   const [fractured, setFractured] = useState(false)
   const [autoLaps, setAutoLaps] = useState(true)
   const autoLapsRef = useRef(true)
@@ -520,20 +522,14 @@ export function CreepConstant({ initialState, isReadOnly = false }: CreepConstan
         setDrag(null)
       }}
     >
-      <header className={styles.header}>
-        <p className={styles.kicker}>Session 05</p>
-        <p className={styles.back}><Link to="/dashboard">Back to the lab</Link></p>
-        <h1>Creep constant</h1>
-        <p className={styles.aim}>
-          Find the transient creep constant β and the viscous creep constant k for a wire under a steady load.
-        </p>
-        <ol className={styles.aims}>
-          <li>Build the stand</li>
-          <li>Run the clock</li>
-          <li>Read the two graphs</li>
-        </ol>
+      <header className={styles.topBar}>
+        <Link to="/dashboard">Back to the lab</Link>
+        <div className={styles.topTitle}>
+          <span>Session 05</span>
+          <h1>Creep constant</h1>
+        </div>
         {isReadOnly ? (
-          <p className={styles.resultsLead}>This is a shared session. The setup can be viewed, not changed.</p>
+          <p className={styles.viewOnly}>This is a shared session. The setup can be viewed, not changed.</p>
         ) : (
           <div className={styles.saveRow}>
             <label>
@@ -547,6 +543,10 @@ export function CreepConstant({ initialState, isReadOnly = false }: CreepConstan
           </div>
         )}
       </header>
+      <div className={styles.shell}>
+        <LessonMenu current={lesson} onSelect={setLesson} />
+        <div className={styles.shellMain}>
+          {lesson === 'simulation' ? (
       <div className={styles.workspace}>
       <PartsTray
         placed={placed}
@@ -704,6 +704,11 @@ export function CreepConstant({ initialState, isReadOnly = false }: CreepConstan
         onRemoveWeight={removeWeight}
       />
       </div>
+      </div>
+          ) : (
+            <LessonReading section={lesson} />
+          )}
+        </div>
       </div>
       {drag ? (
         <div className={styles.ghost} style={{ left: drag.x, top: drag.y }}>

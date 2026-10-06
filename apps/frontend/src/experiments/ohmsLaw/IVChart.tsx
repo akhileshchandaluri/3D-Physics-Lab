@@ -27,7 +27,7 @@ export function IVChart({ ivCurve, resistance, temperature }: IVChartProps) {
           {
             label: `Current temp (${temperature}°C)`,
             data: ivCurve,
-            borderColor: '#378ADD',
+            borderColor: '#8d1b2e',
             backgroundColor: 'transparent',
             borderWidth: 2,
             pointRadius: 0,

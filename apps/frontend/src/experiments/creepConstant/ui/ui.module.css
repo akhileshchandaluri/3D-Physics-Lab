@@ -1,0 +1,430 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding: 18px 16px 16px;
+  overflow: auto;
+  color: #212121;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 16px;
+}
+
+.panelRight {
+  border-right: 1px solid #e6e6e6;
+}
+
+.kicker {
+  margin: 0;
+  color: #8d1b2e;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.heading {
+  align-self: stretch;
+  box-sizing: border-box;
+  width: calc(100% + 32px);
+  margin: 0 -16px 12px;
+  padding: 8px 16px;
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  background: #f0f0f0;
+  border-left: 3px solid #8d1b2e;
+}
+
+.instruction {
+  margin: 0;
+  padding: 12px 14px;
+  color: #212121;
+  background: #f8e8eb;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.note,
+.formula {
+  margin: 0;
+  color: #595959;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.formula {
+  font-family: "Iowan Old Style", Palatino, serif;
+  color: #212121;
+  font-size: 18px;
+}
+
+.tray,
+.wires {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wireStep {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stepLabel,
+.stepLabelOn,
+.stepWaiting {
+  margin: 0;
+  color: #595959;
+  font-size: 13px;
+}
+
+.stepLabelOn {
+  color: #212121;
+  font-weight: 700;
+}
+
+.stepWaiting {
+  padding: 8px 4px;
+}
+
+.stepNo {
+  width: 22px;
+  flex: none;
+  color: #8d1b2e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.part,
+.partActive,
+.partDone {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  color: inherit;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+}
+
+.part strong,
+.partActive strong,
+.partDone strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.part small,
+.partActive small,
+.partDone small {
+  display: block;
+  margin-top: 2px;
+  color: #595959;
+  font-size: 12px;
+}
+
+.partActive {
+  background: #fff;
+  border-color: #8d1b2e;
+  box-shadow: 0 0 0 1px #8d1b2e;
+}
+
+.partDone {
+  opacity: 0.55;
+}
+
+.swatch {
+  width: 18px;
+  height: 28px;
+  flex: none;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.secondary {
+  margin-top: auto;
+  padding: 9px 12px;
+  color: #212121;
+  background: transparent;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+}
+
+.secondary:disabled {
+  opacity: 0.4;
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.facts div {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.facts dt {
+  color: #8d1b2e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.facts dd {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.facts p {
+  margin: 4px 0 0;
+  color: #595959;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  color: #595959;
+  font-size: 13px;
+}
+
+.field span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #212121;
+}
+
+.field input {
+  width: 88px;
+  padding: 6px 8px;
+  color: #212121;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+}
+
+.yield {
+  margin: 0;
+  padding: 8px 10px;
+  color: #8d1b2e;
+  background: #f8e8eb;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.sheet,
+.sheetCompact {
+  color: #2b241c;
+  background: #f4ecdc;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(90, 62, 32, 0.15);
+}
+
+.sheet {
+  padding: 14px;
+}
+
+.sheetCompact {
+  width: 270px;
+  max-height: 390px;
+  padding: 8px;
+  overflow: auto;
+}
+
+.sheetHead {
+  margin-bottom: 8px;
+}
+
+.sheetHead p,
+.sheetHead h2,
+.sheet figcaption,
+.constant,
+.sheetEmpty {
+  margin: 0;
+}
+
+.sheetHead p {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sheetHead h2 {
+  font-family: "Iowan Old Style", Palatino, serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sheetCompact .sheetHead h2 {
+  font-size: 14px;
+}
+
+.tableWrap {
+  max-height: 180px;
+  overflow: auto;
+}
+
+.sheetCompact .tableWrap {
+  max-height: 96px;
+}
+
+.sheet table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+
+.sheetCompact table {
+  font-size: 10px;
+}
+
+.sheet th,
+.sheet td {
+  padding: 4px 4px 4px 0;
+  text-align: right;
+  border-bottom: 1px solid rgba(43, 36, 28, 0.12);
+}
+
+.sheet th:first-child,
+.sheet td:first-child,
+.sheet th:nth-child(2),
+.sheet td:nth-child(2) {
+  text-align: left;
+}
+
+.constant {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sheetCompact .constant,
+.sheetCompact .sheetEmpty,
+.sheetCompact figcaption {
+  font-size: 10px;
+}
+
+.sheetEmpty {
+  margin-top: 6px;
+  color: #5c5146;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.charts {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sheet figcaption {
+  margin-bottom: 4px;
+  color: #5c5146;
+  font-size: 11px;
+}
+
+.chart {
+  height: 160px;
+}
+
+.chartCompact {
+  height: 78px;
+}
+
+.watch {
+  width: 168px;
+  padding: 10px;
+  color: #f6f1e6;
+  background: radial-gradient(circle at 50% 30%, #3a4048, #15171a 62%);
+  border: 3px solid #8d8374;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  user-select: none;
+}
+
+.digits {
+  padding: 8px 6px;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: #e7ffd6;
+  background: #10140f;
+  border-radius: 8px;
+}
+
+.watchRow,
+.speeds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.watch button,
+.speeds button {
+  flex: 1;
+  min-width: 42px;
+  padding: 5px 4px;
+  color: #1c1916;
+  background: #e7d7b4;
+  border: 0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.speeds button {
+  flex: none;
+  min-width: 48px;
+  background: #2a3036;
+  color: #f3eadf;
+}
+
+.speedOn {
+  outline: 2px solid #d7b56d;
+}
+
+.speedLabel,
+.speedHint {
+  margin: 8px 0 0;
+  color: #c9c2b6;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.speedHint {
+  line-height: 1.35;
+}
+
+.plaque {
+  padding: 4px 8px;
+  color: #212121;
+  background: #e7d3a1;
+  border: 0;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}

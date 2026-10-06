@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { Dashboard } from './pages/Dashboard';
 import { OhmsLaw } from './experiments/ohmsLaw/OhmsLaw';
+import { CreepConstant } from './experiments/creepConstant/CreepConstant';
 
 import { SharedExperimentPage } from './pages/SharedExperimentPage';
 import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
@@ -43,8 +44,18 @@ function AppRoutes() {
         path="/experiments/ohms-law"
         element={
           <ProtectedRoute>
-            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+            <div style={{ minHeight: '100vh', background: '#f4f4f4' }}>
               <OhmsLaw />
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/experiments/creep-constant"
+        element={
+          <ProtectedRoute>
+            <div style={{ minHeight: '100vh', background: 'var(--surface-primary)' }}>
+              <CreepConstant />
             </div>
           </ProtectedRoute>
         }

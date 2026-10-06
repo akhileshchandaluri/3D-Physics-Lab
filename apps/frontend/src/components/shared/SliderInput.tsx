@@ -17,7 +17,7 @@ export function SliderInput({
       gap: '12px', marginBottom: '12px'
     }}>
       <span style={{
-        fontSize: '13px', color: '#666', minWidth: '100px'
+        fontSize: '13px', color: '#595959', minWidth: '100px'
       }}>
         {label}
       </span>
@@ -25,11 +25,11 @@ export function SliderInput({
         type="range"
         min={min} max={max} step={step} value={value}
         onChange={e => onChange(parseFloat(e.target.value))}
-        style={{ flex: 1 }}
+        style={{ flex: 1, accentColor: '#8d1b2e' }}
       />
       <span style={{
         fontSize: '13px', fontWeight: 500,
-        minWidth: '72px', textAlign: 'right', color: '#111'
+        minWidth: '72px', textAlign: 'right', color: '#212121'
       }}>
         {value} {unit}
       </span>

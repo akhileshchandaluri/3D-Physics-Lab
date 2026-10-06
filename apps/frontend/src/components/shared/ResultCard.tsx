@@ -10,21 +10,21 @@ export function ResultCard({
 }: ResultCardProps) {
   return (
     <div style={{
-      background: '#f9f9f9',
+      background: highlight ? '#f8e8eb' : '#fff',
       borderRadius: '8px',
       padding: '10px 14px',
-      border: highlight ? '1.5px solid #378ADD' : '0.5px solid #e0e0e0'
+      border: highlight ? '1.5px solid #8d1b2e' : '1px solid #e6e6e6'
     }}>
       <div style={{
-        fontSize: '12px', color: '#888', marginBottom: '4px'
+        fontSize: '12px', color: '#595959', marginBottom: '4px'
       }}>
         {label}
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-        <span style={{ fontSize: '22px', fontWeight: 500, color: '#111' }}>
+        <span style={{ fontSize: '22px', fontWeight: 500, color: '#212121' }}>
           {value}
         </span>
-        <span style={{ fontSize: '13px', color: '#888' }}>
+        <span style={{ fontSize: '13px', color: '#595959' }}>
           {unit}
         </span>
       </div>

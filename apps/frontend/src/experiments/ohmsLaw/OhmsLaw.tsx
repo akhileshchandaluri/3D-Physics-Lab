@@ -216,24 +216,24 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
     }) !== lastSavedSnapshot;
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '16px' }}>
+    <div style={{ minHeight: '100vh', background: '#f4f4f4' }}>
       {/* Top Header Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 32px', background: '#3c414c', color: '#fff', flexWrap: 'wrap', gap: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'var(--text-primary)', fontWeight: 700, fontSize: '16px' }}>
-            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+          <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#fff', fontWeight: 700, fontSize: '16px' }}>
+            <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#8d1b2e', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
               <AtomIcon />
             </div>
             <span>PhySim Lab</span>
           </Link>
-          <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none' }}>
+          <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: '#fff', textDecoration: 'none' }}>
             ← Back to Dashboard
           </Link>
         </div>
 
         {!isReadOnly && (
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#fff', cursor: 'pointer' }}>
               <input
                 type="checkbox"
                 checked={enableAutosave}
@@ -247,7 +247,7 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
               value={saveTitle}
               onChange={(e) => setSaveTitle(e.target.value)}
               placeholder="Experiment Title"
-              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--border-subtle)', background: 'var(--surface-card)', color: 'var(--text-primary)', fontSize: '13px', width: '180px' }}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #e6e6e6', background: '#fff', color: '#212121', fontSize: '13px', width: '180px' }}
             />
 
             <button
@@ -256,7 +256,7 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
               id="save-experiment-btn"
               style={{
                 padding: '7px 16px',
-                background: saveStatus === 'error' ? '#ef4444' : 'var(--gradient-primary)',
+                background: saveStatus === 'error' ? '#ef4444' : '#8d1b2e',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '6px',
@@ -284,15 +284,15 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
 
             {/* Status indicator badge */}
             <div style={{ fontSize: '12px', fontWeight: 600 }}>
-              {saveStatus === 'saving' && <span style={{ color: 'var(--text-muted)' }}>Saving... ⏳</span>}
-              {saveStatus === 'saved' && <span style={{ color: '#10b981' }}>Saved ✓</span>}
+              {saveStatus === 'saving' && <span style={{ color: '#fff' }}>Saving... ⏳</span>}
+              {saveStatus === 'saved' && <span style={{ color: '#7cb342' }}>Saved ✓</span>}
               {saveStatus === 'error' && <span style={{ color: '#ef4444' }}>Save failed ⚠️</span>}
-              {saveStatus === 'idle' && isCurrentStateDirty && <span style={{ color: 'var(--primary-600)' }}>Unsaved changes •</span>}
+              {saveStatus === 'idle' && isCurrentStateDirty && <span style={{ color: '#f8e8eb' }}>Unsaved changes •</span>}
             </div>
 
             <button
               onClick={handleCreateShare}
-              style={{ padding: '7px 16px', background: 'var(--toggle-bg)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+              style={{ padding: '7px 16px', background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.35)', borderRadius: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
             >
               🔗 Share
             </button>
@@ -300,14 +300,15 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
         )}
       </div>
 
+      <div style={{ padding: '24px 32px 48px' }}>
       {saveMessage && (
         <div style={{
           padding: '10px 16px',
           marginBottom: '16px',
           borderRadius: '8px',
-          background: saveStatus === 'error' ? 'rgba(239, 68, 68, 0.1)' : 'var(--surface-card)',
-          border: `1px solid ${saveStatus === 'error' ? 'rgba(239, 68, 68, 0.3)' : 'var(--border-accent)'}`,
-          color: saveStatus === 'error' ? '#ef4444' : 'var(--primary-600)',
+          background: saveStatus === 'error' ? 'rgba(239, 68, 68, 0.1)' : '#fff',
+          border: `1px solid ${saveStatus === 'error' ? 'rgba(239, 68, 68, 0.3)' : '#e6e6e6'}`,
+          color: saveStatus === 'error' ? '#ef4444' : '#8d1b2e',
           fontSize: '13px',
           display: 'flex',
           justifyContent: 'space-between',
@@ -316,7 +317,7 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
           <span>
             {saveMessage}{' '}
             {shareUrl && (
-              <a href={shareUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-500)', marginLeft: '8px', wordBreak: 'break-all' }}>
+              <a href={shareUrl} target="_blank" rel="noreferrer" style={{ color: '#7cb342', marginLeft: '8px', wordBreak: 'break-all' }}>
                 {shareUrl}
               </a>
             )}
@@ -352,7 +353,7 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
           <>
             <div style={{
               fontSize: '12px', fontWeight: 500,
-              color: '#888', marginBottom: '14px'
+              color: '#595959', marginBottom: '14px'
             }}>
               Controls {isReadOnly && '(Read-Only Shared View)'}
             </div>
@@ -378,7 +379,7 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
 
             <div style={{ marginTop: '20px' }}>
               <div style={{
-                fontSize: '12px', color: '#888', marginBottom: '6px'
+                fontSize: '12px', color: '#595959', marginBottom: '6px'
               }}>
                 Circuit diagram
               </div>
@@ -395,7 +396,7 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
           <>
             <div style={{
               fontSize: '12px', fontWeight: 500,
-              color: '#888', marginBottom: '14px'
+              color: '#595959', marginBottom: '14px'
             }}>
               I-V characteristic
             </div>
@@ -442,6 +443,7 @@ export function OhmsLaw({ initialParameters, isReadOnly = false }: OhmsLawProps)
           ]} />
         }
       />
+      </div>
     </div>
   );
 }

@@ -39,118 +39,125 @@ const PlayIcon = () => (
 const ArrowRightIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
 );
-const StarIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-);
-const QuoteIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" opacity="0.15"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-);
-
-/* ─── Experiments data ─── */
+/* ─── Course sessions ─── */
 const experiments = [
   {
     title: "Ohm's Law",
-    description: "Explore voltage, current, and resistance relationships with interactive circuit simulations.",
+    description: "Session 01. Change the voltage and the resistance, and read the current.",
     icon: <BoltIcon />,
-    color: '#6366f1',
-    status: 'Available',
+    color: '#8d1b2e',
+    status: 'Available' as const,
+    path: '/experiments/ohms-law',
   },
   {
-    title: "Simple Pendulum",
-    description: "Study oscillatory motion by varying length, mass, and gravitational acceleration.",
+    title: 'Lattice constant',
+    description: 'Session 02. Determination of lattice constant. This session is listed and not built yet.',
     icon: <AtomIcon />,
-    color: '#8b5cf6',
-    status: 'Coming Soon',
+    color: '#3c414c',
+    status: 'Not built yet' as const,
+    path: '',
   },
   {
-    title: "Projectile Motion",
-    description: "Launch projectiles at different angles and velocities to analyze parabolic trajectories.",
+    title: 'Lycopodium powder',
+    description: 'Session 03. Particle size of lycopodium powder using a laser. This session is listed and not built yet.',
     icon: <ChartIcon />,
-    color: '#a855f7',
-    status: 'Coming Soon',
+    color: '#7cb342',
+    status: 'Not built yet' as const,
+    path: '',
   },
   {
-    title: "Snell's Law",
-    description: "Visualize light refraction through different media and verify Snell's law interactively.",
+    title: "Young's modulus",
+    description: 'Session 04. Uniform bending method. This session is listed and not built yet.',
     icon: <BeakerIcon />,
-    color: '#c084fc',
-    status: 'Coming Soon',
+    color: '#8d1b2e',
+    status: 'Not built yet' as const,
+    path: '',
   },
   {
-    title: "Newton's Cooling",
-    description: "Observe how temperature changes over time and verify Newton's law of cooling.",
+    title: 'Creep constant',
+    description: 'Session 05. Hang a steady weight on a wire and find the two creep numbers, β and k.',
     icon: <CpuIcon />,
-    color: '#10b981',
-    status: 'Coming Soon',
+    color: '#7cb342',
+    status: 'Available' as const,
+    path: '/experiments/creep-constant',
   },
   {
-    title: "Wave Interference",
-    description: "Combine two waves and observe constructive & destructive interference patterns.",
+    title: 'Hall effect',
+    description: 'Session 06. Hall coefficient. This session is listed and not built yet.',
+    icon: <ShieldIcon />,
+    color: '#3c414c',
+    status: 'Not built yet' as const,
+    path: '',
+  },
+  {
+    title: "Planck's constant",
+    description: 'Session 07. This session is listed and not built yet.',
+    icon: <UsersIcon />,
+    color: '#8d1b2e',
+    status: 'Not built yet' as const,
+    path: '',
+  },
+  {
+    title: 'Solar cell',
+    description: 'Session 08. Solar cell characteristics. This session is listed and not built yet.',
     icon: <AtomIcon />,
-    color: '#f97316',
-    status: 'Coming Soon',
+    color: '#3c414c',
+    status: 'Not built yet' as const,
+    path: '',
   },
 ];
 
 const features = [
   {
     icon: <BoltIcon />,
-    title: "Real-Time Simulations",
-    desc: "Interactive physics engines that respond instantly to parameter changes with smooth 60fps rendering.",
+    title: 'Change a quantity',
+    desc: 'Move a control and watch the reading change. The number on the instrument is the one you write down.',
   },
   {
     icon: <ChartIcon />,
-    title: "Live Data Visualization",
-    desc: "Auto-generated graphs and charts that plot your experimental data in real-time as you adjust variables.",
+    title: 'Table and graph',
+    desc: 'The session draws the table and the graph from your readings, so you can copy them into the lab record.',
   },
   {
     icon: <AtomIcon />,
-    title: "Accurate Physics Models",
-    desc: "Built on validated equations and models used in academic research and standardized curricula.",
+    title: 'Workbook equations',
+    desc: 'The models follow the equations in the physics workbook for this course.',
   },
   {
     icon: <CpuIcon />,
-    title: "Session Progress Tracking",
-    desc: "Save your experiment sessions, track observations, and export results for lab reports.",
+    title: 'Save a session',
+    desc: 'Sign in, save the setup, and open it again when you write the record.',
   },
   {
     icon: <ShieldIcon />,
-    title: "Safe Experimentation",
-    desc: "No broken equipment, no safety hazards — explore freely without limits or consequences.",
+    title: 'No extra software',
+    desc: 'The lab opens in the browser. Nothing has to be installed on the lab computer.',
   },
   {
     icon: <UsersIcon />,
-    title: "Collaborative Learning",
-    desc: "Share experiment setups with classmates, compare results, and learn together in real-time.",
+    title: 'Class account',
+    desc: 'Use the account your teacher gave you. A teacher can also open the classroom page.',
   },
 ];
 
-const testimonials = [
+const labNotes = [
   {
-    name: "Arjun Reddy",
-    role: "3rd Year, ECE",
-    text: "The Ohm's Law simulation helped me visualize what I'd only seen in textbooks. My lab understanding improved dramatically.",
-    rating: 5,
+    title: 'Take the readings',
+    text: 'Read the instruments in the session. Do not invent a number that the instrument does not show.',
   },
   {
-    name: "Priya Sharma",
-    role: "2nd Year, CSE",
-    text: "I love how I can experiment without worrying about breaking expensive lab equipment. The real-time graphs are incredibly helpful.",
-    rating: 5,
+    title: 'Save the session',
+    text: 'Save before you leave. The saved session keeps the setup so you can open it again for the lab record.',
   },
   {
-    name: "Karthik Nair",
-    role: "4th Year, Mechanical",
-    text: "The projectile motion simulator made our mechanics class so much more intuitive. Wish we had this from day one!",
-    rating: 5,
+    title: 'Check the graph',
+    text: 'Compare the graph with the workbook. The slope is the quantity the session asks you to find.',
   },
 ];
 
 const stats = [
-  { value: '6+', label: 'Experiments' },
-  { value: '500+', label: 'Active Users' },
-  { value: '10K+', label: 'Simulations Run' },
-  { value: '4.8', label: 'Avg Rating' },
+  { value: '8', label: 'Sessions' },
+  { value: '2', label: 'Ready to open' },
 ];
 
 export function LandingPage() {
@@ -198,21 +205,21 @@ export function LandingPage() {
           </Link>
           <div className="navbar-links">
             <a href="#experiments">Experiments</a>
-            <a href="#features">Features</a>
-            <a href="#testimonials">Reviews</a>
-            <a href="#faq">FAQ</a>
-            <Link to="/login?role=teacher" style={{ color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}>Educators</Link>
+            <a href="#how-it-works">How the lab works</a>
+            <a href="#lab-record">Lab record</a>
+            <a href="#faq">Questions</a>
+            <Link to="/login?role=teacher" style={{ color: '#fff', fontSize: '14px', fontWeight: 500, textDecoration: 'none' }}>Educators</Link>
           </div>
           <div className="navbar-actions">
             <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme" id="theme-toggle-btn">
               {theme === 'light' ? <MoonIcon /> : <SunIcon />}
             </button>
             {isAuthenticated ? (
-              <Link to="/dashboard" className="btn-primary-sm" id="nav-dashboard-btn">Dashboard →</Link>
+              <Link to="/dashboard" className="btn-primary-sm" id="nav-dashboard-btn">Open the lab</Link>
             ) : (
               <>
-                <Link to="/login" className="btn-ghost" id="nav-login-btn">Log In</Link>
-                <Link to="/signup" className="btn-primary-sm" id="nav-signup-btn">Get Started</Link>
+                <Link to="/login" className="btn-ghost" id="nav-login-btn">Sign in</Link>
+                <Link to={isAuthenticated ? '/dashboard' : '/login'} className="btn-primary-sm" id="nav-signup-btn">Open the lab</Link>
               </>
             )}
           </div>
@@ -231,28 +238,27 @@ export function LandingPage() {
         <div className="hero-content">
           <div className="hero-badge animate-fade-in-up">
             <span className="badge-dot" />
-            Now Live — Ohm's Law Simulation
+            Ohm's Law and Creep Constant are ready
           </div>
 
           <h1 className="hero-title animate-fade-in-up delay-100">
-            Master Physics Through<br />
-            <span className="gradient-text">Interactive Simulations</span>
+            College physics laboratory<br />
+            <span className="gradient-text">Virtual experiments for this course</span>
           </h1>
 
           <p className="hero-subtitle animate-fade-in-up delay-200">
-            Experience hands-on virtual experiments that bring textbook concepts to life.
-            Adjust parameters in real-time, visualize results instantly, and build deep
-            intuitive understanding of physics principles.
+            Sign in with the account from class. Two sessions can be opened today.
+            The other sessions are listed here and are not built yet.
           </p>
 
           <div className="hero-actions animate-fade-in-up delay-300">
-            <Link to={isAuthenticated ? "/dashboard" : "/signup"} className="btn-primary" id="hero-signup-btn">
-              {isAuthenticated ? 'Open Lab Dashboard' : 'Start Experimenting'}
+            <Link to={isAuthenticated ? "/dashboard" : "/login"} className="btn-primary" id="hero-signup-btn">
+              Open the lab
               <ArrowRightIcon />
             </Link>
             <a href="#experiments" className="btn-outline" id="hero-explore-btn">
               <PlayIcon />
-              Explore Labs
+              See the sessions
             </a>
           </div>
 
@@ -277,9 +283,9 @@ export function LandingPage() {
       {/* ────── SOCIAL PROOF BAR ────── */}
       <section className="proof-bar scroll-reveal">
         <div className="proof-inner">
-          <p className="proof-label">Trusted by students across Engineering, Sciences & Mathematics departments</p>
+          <p className="proof-label">Sessions in this laboratory</p>
           <div className="proof-logos">
-            {['Physics', 'Electronics', 'Mechanics', 'Optics', 'Thermodynamics'].map((d) => (
+            {["Ohm's law", 'Lattice constant', "Young's modulus", 'Creep', 'Hall effect', "Planck's constant", 'Solar cell'].map((d) => (
               <span key={d} className="proof-dept">{d}</span>
             ))}
           </div>
@@ -290,11 +296,10 @@ export function LandingPage() {
       <section className="section" id="experiments">
         <div className="section-inner">
           <div className="section-header scroll-reveal">
-            <span className="section-tag">Virtual Laboratory</span>
-            <h2 className="section-title">Explore Our Experiments</h2>
+            <span className="section-tag">This course</span>
+            <h2 className="section-title">The eight laboratory sessions</h2>
             <p className="section-desc">
-              Each experiment is carefully designed to reinforce core physics concepts
-              with real-time interactive simulations you can control.
+              These are the sessions in the catalog. Ohm's Law and Creep Constant can be opened now.
             </p>
           </div>
 
@@ -319,11 +324,11 @@ export function LandingPage() {
                     {exp.status}
                   </span>
                   {exp.status === 'Available' ? (
-                    <Link to={isAuthenticated ? '/dashboard' : '/login'} className="exp-link">
-                      Launch <ArrowRightIcon />
+                    <Link to={isAuthenticated ? exp.path : '/login'} className="exp-link">
+                      Open <ArrowRightIcon />
                     </Link>
                   ) : (
-                    <span className="exp-link disabled">Coming Soon</span>
+                    <span className="exp-link disabled">Not built yet</span>
                   )}
                 </div>
               </div>
@@ -336,11 +341,10 @@ export function LandingPage() {
       <section className="section section-alt" id="features">
         <div className="section-inner">
           <div className="section-header scroll-reveal">
-            <span className="section-tag">Why PhySim Lab</span>
-            <h2 className="section-title">Built for Real Understanding</h2>
+            <span className="section-tag">In the session</span>
+            <h2 className="section-title">What you do in the lab</h2>
             <p className="section-desc">
-              Go beyond memorization — our platform is engineered to help you develop
-              deep, intuitive understanding of physical phenomena.
+              Change a quantity, read the instrument, and copy the table and the graph into the lab record.
             </p>
           </div>
 
@@ -364,18 +368,18 @@ export function LandingPage() {
       <section className="section" id="how-it-works">
         <div className="section-inner">
           <div className="section-header scroll-reveal">
-            <span className="section-tag">Getting Started</span>
-            <h2 className="section-title">Three Steps to Mastery</h2>
+            <span className="section-tag">In class</span>
+            <h2 className="section-title">Three steps</h2>
             <p className="section-desc">
-              Our streamlined workflow gets you from login to lab results in minutes.
+              Sign in, open a session, and record the readings.
             </p>
           </div>
 
           <div className="steps-row">
             {[
-              { num: '01', title: 'Create an Account', desc: 'Sign up in seconds with your email. Your progress and sessions are saved automatically.' },
-              { num: '02', title: 'Choose an Experiment', desc: 'Browse our library of physics simulations. Each one is mapped to standard curriculum topics.' },
-              { num: '03', title: 'Simulate & Learn', desc: 'Adjust variables, observe real-time changes, record readings, and export your results.' },
+              { num: '01', title: 'Sign in', desc: 'Use the account from class. Your saved sessions stay with that account.' },
+              { num: '02', title: 'Open a session', desc: 'Ohm\'s Law and Creep Constant are ready. The other six sessions are on the list and are not built yet.' },
+              { num: '03', title: 'Record the readings', desc: 'Read the instruments, save the session, and copy the table and the graph into the lab record.' },
             ].map((step, i) => (
               <div key={step.num} className="step-card scroll-reveal" style={{ animationDelay: `${i * 0.15}s` }}>
                 <div className="step-num">{step.num}</div>
@@ -389,33 +393,21 @@ export function LandingPage() {
       </section>
 
       {/* ────── TESTIMONIALS ────── */}
-      <section className="section section-alt" id="testimonials">
+      <section className="section section-alt" id="lab-record">
         <div className="section-inner">
           <div className="section-header scroll-reveal">
-            <span className="section-tag">Student Voices</span>
-            <h2 className="section-title">Loved by Learners</h2>
+            <span className="section-tag">Lab record</span>
+            <h2 className="section-title">What goes in the record</h2>
             <p className="section-desc">
-              Hear what students have to say about their experience with PhySim Lab.
+              The session is the practical. The record is what you write from it.
             </p>
           </div>
 
           <div className="testimonials-grid">
-            {testimonials.map((t, i) => (
-              <div key={t.name} className="testimonial-card scroll-reveal" style={{ animationDelay: `${i * 0.12}s` }}>
-                <QuoteIcon />
-                <p className="testimonial-text">{t.text}</p>
-                <div className="testimonial-stars">
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <StarIcon key={j} />
-                  ))}
-                </div>
-                <div className="testimonial-author">
-                  <div className="testimonial-avatar">{t.name[0]}</div>
-                  <div>
-                    <p className="testimonial-name">{t.name}</p>
-                    <p className="testimonial-role">{t.role}</p>
-                  </div>
-                </div>
+            {labNotes.map((note, i) => (
+              <div key={note.title} className="testimonial-card scroll-reveal" style={{ animationDelay: `${i * 0.12}s` }}>
+                <h3 className="feature-title">{note.title}</h3>
+                <p className="testimonial-text">{note.text}</p>
               </div>
             ))}
           </div>
@@ -426,18 +418,17 @@ export function LandingPage() {
       <section className="section" id="faq">
         <div className="section-inner section-narrow">
           <div className="section-header scroll-reveal">
-            <span className="section-tag">FAQ</span>
-            <h2 className="section-title">Frequently Asked Questions</h2>
+            <span className="section-tag">Questions</span>
+            <h2 className="section-title">Before you open a session</h2>
           </div>
 
           <div className="faq-list">
             {[
-              { q: 'Is PhySim Lab free to use?', a: 'Yes! All basic simulations are completely free. Create an account and start experimenting immediately.' },
-              { q: 'Do I need to install any software?', a: 'No installation required. PhySim Lab runs entirely in your browser on any device — desktop, tablet, or mobile.' },
-              { q: 'Can I use simulation data for my lab reports?', a: 'Absolutely. You can export readings, graphs, and observations directly from each experiment session.' },
-              { q: 'How accurate are the simulations?', a: 'Our models are built using validated physics equations and are reviewed by faculty. They closely mirror real-world lab behavior.' },
-              { q: 'Will more experiments be added?', a: 'Yes! We regularly expand our library. Simple Pendulum, Projectile Motion, and Snell\'s Law are coming soon.' },
-              { q: 'Can I reset my experiment and start over?', a: 'Of course. Each session can be reset to defaults or you can start a new session while keeping the previous one saved.' },
+              { q: 'Who can sign in?', a: 'Students in this physics laboratory, with the account from class. A teacher signs in to open the classroom page.' },
+              { q: 'Do I need to install anything?', a: 'No. The lab runs in the browser on the computer you use for the practical.' },
+              { q: 'Can these readings go in the lab record?', a: 'Yes. Copy the table and the graph from the session into the record. Read the instruments. Do not type a number the instrument does not show.' },
+              { q: 'Which sessions can I open?', a: 'Ohm\'s Law and Determination of Creep Constant. The other six sessions are on the list and are not built yet.' },
+              { q: 'What if I need to start the practical again?', a: 'Reset that session. A session you already saved stays in your account until you delete it.' },
             ].map((faq, i) => (
               <details key={i} className="faq-item scroll-reveal" style={{ animationDelay: `${i * 0.08}s` }}>
                 <summary className="faq-question">{faq.q}</summary>
@@ -455,18 +446,17 @@ export function LandingPage() {
           <div className="cta-orb cta-orb-2" />
         </div>
         <div className="cta-content">
-          <h2 className="cta-title">Ready to Transform How You Learn Physics?</h2>
+          <h2 className="cta-title">Sign in and open the lab</h2>
           <p className="cta-desc">
-            Join hundreds of students already mastering physics concepts through
-            interactive virtual experiments. It's free, instant, and built for you.
+            Use the account from class. Ohm's Law and Creep Constant are ready.
           </p>
           <div className="cta-actions">
-            <Link to="/signup" className="btn-primary btn-lg" id="cta-signup-btn">
-              Create Free Account
+            <Link to="/login" className="btn-primary btn-lg" id="cta-signup-btn">
+              Sign in
               <ArrowRightIcon />
             </Link>
-            <Link to="/login" className="btn-outline btn-lg" id="cta-login-btn">
-              Log In
+            <Link to={isAuthenticated ? '/dashboard' : '/login'} className="btn-outline btn-lg" id="cta-login-btn">
+              Open the lab
             </Link>
           </div>
         </div>
@@ -478,31 +468,31 @@ export function LandingPage() {
           <div className="footer-brand">
             <div className="brand-icon"><AtomIcon /></div>
             <span className="brand-text">PhySim Lab</span>
-            <p className="footer-tagline">Interactive physics simulations for the curious mind.</p>
+            <p className="footer-tagline">A college physics laboratory project.</p>
           </div>
 
           <div className="footer-links-group">
             <div className="footer-col">
-              <h4>Platform</h4>
-              <a href="#experiments">Experiments</a>
-              <a href="#features">Features</a>
-              <a href="#how-it-works">How It Works</a>
+              <h4>Laboratory</h4>
+              <a href="#experiments">Sessions</a>
+              <a href="#features">In the session</a>
+              <a href="#how-it-works">How the lab works</a>
             </div>
             <div className="footer-col">
-              <h4>Resources</h4>
-              <a href="#faq">FAQ</a>
-              <a href="#testimonials">Reviews</a>
-              <Link to="/signup">Get Started</Link>
+              <h4>Course</h4>
+              <a href="#faq">Questions</a>
+              <a href="#lab-record">Lab record</a>
+              <Link to="/login">Sign in</Link>
             </div>
             <div className="footer-col">
               <h4>Account</h4>
-              <Link to="/login">Log In</Link>
-              <Link to="/signup">Sign Up</Link>
+              <Link to="/login">Sign in</Link>
+              <Link to="/login?role=teacher">Teacher</Link>
             </div>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} PhySim Lab. Built with ❤️ for curious learners.</p>
+          <p>&copy; {new Date().getFullYear()} PhySim Lab. A college physics laboratory project.</p>
         </div>
       </footer>
     </div>

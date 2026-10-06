@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { OhmsLaw } from '../experiments/ohmsLaw/OhmsLaw';
+import { CreepConstant } from '../experiments/creepConstant/CreepConstant';
 
 interface SharedData {
   id: string;
@@ -103,6 +104,8 @@ export function SharedExperimentPage() {
       {/* Experiment */}
       {data.experimentId === 'ohms-law' ? (
         <OhmsLaw initialParameters={data.state} isReadOnly={true} />
+      ) : data.experimentId === 'creep-constant' ? (
+        <CreepConstant initialState={data.state} isReadOnly />
       ) : (
         <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
           Simulation view for {data.experimentId}

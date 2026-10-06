@@ -10,7 +10,7 @@ const CANONICAL_EXPERIMENTS = [
   { id: 'lattice-constant', code: 'Session 02', title: 'Determination of Lattice Constant', path: '', available: false },
   { id: 'lycopodium-laser', code: 'Session 03', title: 'Determination of Particle Size of Lycopodium Powder Using Laser', path: '', available: false },
   { id: 'youngs-modulus', code: 'Session 04', title: 'Determination of Young\'s Modulus — Uniform Bending Method', path: '', available: false },
-  { id: 'creep-constant', code: 'Session 05', title: 'Determination of Creep Constant', path: '', available: false },
+  { id: 'creep-constant', code: 'Session 05', title: 'Determination of Creep Constant', path: '/experiments/creep-constant', available: true },
   { id: 'hall-effect', code: 'Session 06', title: 'Determination of Hall Coefficient Using Hall Effect', path: '', available: false },
   { id: 'plancks-constant', code: 'Session 07', title: 'Determination of Planck\'s Constant', path: '', available: false },
   { id: 'solar-cell', code: 'Session 08', title: 'Solar Cell Characteristics', path: '', available: false },

@@ -59,6 +59,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodNotSupported(
+            org.springframework.web.HttpRequestMethodNotSupportedException ex) {
+        log.warn("Unsupported HTTP method: {}", ex.getMessage());
+        ApiErrorResponse body = new ApiErrorResponse("This action is not supported.", "METHOD_NOT_ALLOWED");
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(body);
+    }
+
     @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
     public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
         log.warn("Data integrity violation: {}", ex.getMessage());
@@ -82,6 +90,18 @@ public class GlobalExceptionHandler {
                 "email", ex.getEmail(),
                 "linkToken", ex.getLinkToken()
         ));
+    }
+
+    @ExceptionHandler({
+            com.yubico.webauthn.exception.RegistrationFailedException.class,
+            com.yubico.webauthn.exception.AssertionFailedException.class
+    })
+    public ResponseEntity<ApiErrorResponse> handleWebAuthnFailure(Exception ex) {
+        log.warn("WebAuthn ceremony failed: {}", ex.getMessage());
+        ApiErrorResponse body = new ApiErrorResponse(
+                "The browser check failed. Try again or use your authenticator code.",
+                "UNAUTHORIZED");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
     }
 
     @ExceptionHandler(Exception.class)

@@ -99,8 +99,7 @@ class GoogleOAuthIntegrationTest {
     }
 
     @Test
-    void testFirstTimeGoogleUserRegistrationAndSessionCreation() throws Exception {
-        // 1. Generate auth URL to initialize valid state
+    void testUnknownGoogleUserIsRejected() throws Exception {
         MvcResult authResult = mockMvc.perform(get("/api/v1/auth/oauth/google/authorize"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -115,37 +114,15 @@ class GoogleOAuthIntegrationTest {
         when(googleTokenVerifier.verifyToken(eq("mock-id-token"), any()))
                 .thenReturn(new GoogleIdTokenClaims(googleSub, googleEmail, true, "Google Explorer", "https://photo.url"));
 
-        // 2. Post callback
         GoogleOAuthCallbackRequest callbackRequest = new GoogleOAuthCallbackRequest("auth-code-123", authResponse.state(), null);
 
-        MvcResult callbackResult = mockMvc.perform(post("/api/v1/auth/oauth/google/callback")
+        mockMvc.perform(post("/api/v1/auth/oauth/google/callback")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(callbackRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user.email").value(googleEmail))
-                .andExpect(jsonPath("$.user.name").value("Google Explorer"))
-                .andExpect(jsonPath("$.user.role").value("STUDENT")) // Never TEACHER or ADMIN!
-                .andExpect(cookie().exists("physim_session"))
-                .andReturn();
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("UNAUTHORIZED"));
 
-        Cookie sessionCookie = callbackResult.getResponse().getCookie("physim_session");
-        assertNotNull(sessionCookie);
-
-        // 3. Verify user in database
-        Optional<UserEntity> createdUserOpt = userRepository.findByEmail(googleEmail);
-        assertTrue(createdUserOpt.isPresent());
-        UserEntity createdUser = createdUserOpt.get();
-        assertEquals(UserRole.STUDENT, createdUser.getRole());
-        assertEquals("GOOGLE", createdUser.getAuthProvider());
-        assertEquals(googleSub, createdUser.getProviderId());
-        assertNull(createdUser.getPasswordHash());
-
-        // 4. Verify session works with /api/v1/auth/me
-        mockMvc.perform(get("/api/v1/auth/me")
-                        .cookie(sessionCookie))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user.email").value(googleEmail))
-                .andExpect(jsonPath("$.user.role").value("STUDENT"));
+        assertTrue(userRepository.findByEmail(googleEmail).isEmpty());
     }
 
     @Test

@@ -3,7 +3,6 @@ package com.physim.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.physim.dto.CreateSavedExperimentRequest;
 import com.physim.dto.CreateShareRequest;
-import com.physim.dto.SignupRequest;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,18 +36,12 @@ class ShareControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SignupRequest signup = new SignupRequest();
-        signup.setEmail("share_user_" + System.currentTimeMillis() + "@test.com");
-        signup.setPassword("Password123!");
-        signup.setName("Share Author");
-
-        MvcResult signupResult = mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(signup)))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        userCookie = signupResult.getResponse().getCookie("physim_session");
+        userCookie = TestAccountHelper.createStudentAndLogin(
+                mockMvc,
+                objectMapper,
+                "Share Author",
+                "share_user_" + System.currentTimeMillis() + "@test.com",
+                "Password123!");
 
         CreateSavedExperimentRequest expReq = new CreateSavedExperimentRequest();
         expReq.setExperimentId("ohms-law");

@@ -38,37 +38,14 @@ class AdminControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Admin login
-        LoginRequest adminLogin = new LoginRequest();
-        adminLogin.setEmail("admin@physim.edu");
-        adminLogin.setPassword("AdminPassword123!");
+        adminCookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, "admin@physim.edu", "AdminPassword123!");
 
-        MvcResult adminRes = mockMvc.perform(post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(adminLogin)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        adminCookie = adminRes.getResponse().getCookie("physim_session");
-
-        // Student login
         studentEmail = "student_admin_test_" + System.currentTimeMillis() + "@test.com";
-        SignupRequest studentSignup = new SignupRequest();
-        studentSignup.setEmail(studentEmail);
-        studentSignup.setPassword("StudentPass123!");
-        studentSignup.setName("Bob Student");
-
-        MvcResult studentRes = mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(studentSignup)))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        studentCookie = studentRes.getResponse().getCookie("physim_session");
-        JsonNode signupNode = objectMapper.readTree(studentRes.getResponse().getContentAsString());
-        if (signupNode.has("user") && signupNode.get("user").has("id")) {
-            studentId = signupNode.get("user").get("id").asText();
-        }
+        studentId = TestAccountHelper.createUser(
+                mockMvc, objectMapper, adminCookie, "Bob Student", studentEmail, "StudentPass123!", UserRole.STUDENT);
+        studentCookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, studentEmail, "StudentPass123!");
     }
 
     @Test
@@ -125,5 +102,16 @@ class AdminControllerTest {
                         .cookie(adminCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items", not(empty())));
+
+        // 6. Admin can delete the student account
+        mockMvc.perform(delete("/api/v1/admin/users/" + targetUserId)
+                        .cookie(adminCookie))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/v1/admin/users")
+                        .param("search", studentEmail)
+                        .cookie(adminCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items", empty()));
     }
 }

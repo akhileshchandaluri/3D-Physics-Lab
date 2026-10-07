@@ -2,7 +2,6 @@ package com.physim.service;
 
 import com.physim.dto.*;
 import com.physim.entity.UserEntity;
-import com.physim.entity.UserRole;
 import com.physim.exception.AccountLinkingRequiredException;
 import com.physim.exception.BadRequestException;
 import com.physim.exception.ForbiddenException;
@@ -148,20 +147,8 @@ public class GoogleOAuthService {
             throw new AccountLinkingRequiredException(user.getEmail(), linkToken);
         }
 
-        // 3. New Google user -> Assign least-privileged role STUDENT
-        UserEntity newUser = new UserEntity();
-        newUser.setEmail(email);
-        String name = (claims.name() != null && !claims.name().isBlank()) ? claims.name().trim() : email.split("@")[0];
-        newUser.setName(name);
-        newUser.setPasswordHash(null);
-        newUser.setAuthProvider("GOOGLE");
-        newUser.setProviderId(claims.subject());
-        newUser.setRole(UserRole.STUDENT);
-        newUser.setActive(true);
-
-        UserEntity savedUser = userRepository.save(newUser);
-        String sessionToken = authService.createSession(savedUser, userAgent, ipAddress);
-        return new AuthResponse(authService.toDTO(savedUser), sessionToken, "Google account registered successfully.");
+        // 3. Unknown Google account — only admins may provision users
+        throw new UnauthorizedException("No PhySim account exists for this Google email. Ask an administrator to create one.");
     }
 
     @Transactional

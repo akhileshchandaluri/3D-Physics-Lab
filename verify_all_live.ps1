@@ -1,17 +1,46 @@
 $ErrorActionPreference = "Stop"
 
+function Get-TotpCode([string]$Base32Secret) {
+    $alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+    $bits = ""
+    foreach ($c in $Base32Secret.ToUpper().ToCharArray()) {
+        $val = $alphabet.IndexOf($c)
+        if ($val -lt 0) { continue }
+        $bits += [Convert]::ToString($val, 2).PadLeft(5, '0')
+    }
+    $byteLen = [Math]::Floor($bits.Length / 8)
+    $bytes = New-Object byte[] $byteLen
+    for ($i = 0; $i -lt $byteLen; $i++) {
+        $bytes[$i] = [Convert]::ToByte($bits.Substring($i * 8, 8), 2)
+    }
+    $counterValue = [int64][Math]::Floor(([DateTimeOffset]::UtcNow.ToUnixTimeSeconds()) / 30)
+    $counter = [BitConverter]::GetBytes([IPAddress]::HostToNetworkOrder($counterValue))
+    $hmac = New-Object System.Security.Cryptography.HMACSHA1
+    $hmac.Key = $bytes
+    $hash = $hmac.ComputeHash($counter)
+    $offset = $hash[$hash.Length - 1] -band 0x0F
+    $code = (($hash[$offset] -band 0x7F) -shl 24) -bor (($hash[$offset + 1] -band 0xFF) -shl 16) -bor (($hash[$offset + 2] -band 0xFF) -shl 8) -bor ($hash[$offset + 3] -band 0xFF)
+    return ($code % 1000000).ToString('D6')
+}
+
+function Login-WithOptionalMfa($Email, $Password, $WebSession) {
+    $loginBody = @{ email = $Email; password = $Password } | ConvertTo-Json
+    $loginRes = Invoke-RestMethod -Uri "http://localhost:8080/api/v1/auth/login" -Method Post -Body $loginBody -ContentType "application/json" -WebSession $WebSession
+    if ($loginRes.mfaRequired) {
+        $code = Get-TotpCode "JBSWY3DPEHPK3PXP"
+        $mfaBody = @{ challengeToken = $loginRes.mfaChallengeToken; code = $code } | ConvertTo-Json
+        $loginRes = Invoke-RestMethod -Uri "http://localhost:8080/api/v1/auth/mfa/totp/verify" -Method Post -Body $mfaBody -ContentType "application/json" -WebSession $WebSession
+    }
+    return $loginRes
+}
+
 Write-Host "=== 1. Checking Health Endpoint ==="
 $health = Invoke-RestMethod -Uri "http://localhost:8080/api/health" -Method Get
 Write-Host "Health status: $($health.status)"
 
 Write-Host "`n=== 2. Testing Teacher Login & Assignment Creation ==="
-$loginBody = @{
-    email = "teacher@physim.edu"
-    password = "TeacherPassword123!"
-} | ConvertTo-Json
-
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$loginRes = Invoke-RestMethod -Uri "http://localhost:8080/api/v1/auth/login" -Method Post -Body $loginBody -ContentType "application/json" -WebSession $session
+$loginRes = Login-WithOptionalMfa "teacher@physim.edu" "TeacherPassword123!" $session
 Write-Host "Logged in teacher: $($loginRes.user.email), Role: $($loginRes.user.role)"
 
 # Get teacher classrooms
@@ -64,18 +93,23 @@ if ($oauthAuthRes.authUrl -match "code_challenge=" -and $oauthAuthRes.authUrl -m
     Write-Error "Google OAuth URL missing required PKCE/OIDC parameters!"
 }
 
-Write-Host "`n=== 4. Regression: Student Classroom Join Flow ==="
-# Create student
+Write-Host "`n=== 4. Regression: Admin Creates Student, Then Classroom Join ==="
+$adminSession = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+$null = Login-WithOptionalMfa "admin@physim.edu" "AdminPassword123!" $adminSession
+
 $studentEmail = "student_live_$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())@example.com"
 $studentBody = @{
     name = "Live Student"
     email = $studentEmail
     password = "StudentSecret123!"
+    role = "STUDENT"
 } | ConvertTo-Json
 
+$createdStudent = Invoke-RestMethod -Uri "http://localhost:8080/api/v1/admin/users" -Method Post -Body $studentBody -ContentType "application/json" -WebSession $adminSession
+Write-Host "Admin created student: $($createdStudent.email)"
+
 $studentSession = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$studentSignup = Invoke-RestMethod -Uri "http://localhost:8080/api/v1/auth/signup" -Method Post -Body $studentBody -ContentType "application/json" -WebSession $studentSession
-Write-Host "Registered student: $($studentSignup.user.email)"
+$null = Login-WithOptionalMfa $studentEmail "StudentSecret123!" $studentSession
 
 # Join classroom
 $joinBody = @{

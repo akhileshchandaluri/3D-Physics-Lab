@@ -7,6 +7,7 @@ import com.physim.entity.UserRole;
 import com.physim.repository.AssignmentRepository;
 import com.physim.repository.ClassroomRepository;
 import com.physim.repository.UserRepository;
+import com.physim.service.MfaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,8 +58,18 @@ public class DataInitializer implements CommandLineRunner {
             admin.setPasswordHash(passwordEncoder.encode(adminPassword));
             admin.setRole(UserRole.ADMIN);
             admin.setActive(true);
+            admin.setTotpSecret(MfaService.DEMO_TOTP_SECRET);
+            admin.setTotpEnabled(true);
             userRepository.save(admin);
             log.info("Initialized default administrator account: {}", adminEmail);
+        } else {
+            userRepository.findByEmail(adminEmail).ifPresent(admin -> {
+                if (!admin.isTotpEnabled()) {
+                    admin.setTotpSecret(MfaService.DEMO_TOTP_SECRET);
+                    admin.setTotpEnabled(true);
+                    userRepository.save(admin);
+                }
+            });
         }
 
         // 2. Provision demo teacher if not present
@@ -70,6 +81,8 @@ public class DataInitializer implements CommandLineRunner {
             teacher.setPasswordHash(passwordEncoder.encode("TeacherPassword123!"));
             teacher.setRole(UserRole.TEACHER);
             teacher.setActive(true);
+            teacher.setTotpSecret(MfaService.DEMO_TOTP_SECRET);
+            teacher.setTotpEnabled(true);
             UserEntity savedTeacher = userRepository.save(teacher);
             log.info("Initialized default teacher account: {}", teacherEmail);
 
@@ -91,6 +104,14 @@ public class DataInitializer implements CommandLineRunner {
                 assignmentRepository.save(assignment);
                 log.info("Initialized default classroom [PHY101] with assignment.");
             }
+        } else {
+            userRepository.findByEmail(teacherEmail).ifPresent(teacher -> {
+                if (!teacher.isTotpEnabled()) {
+                    teacher.setTotpSecret(MfaService.DEMO_TOTP_SECRET);
+                    teacher.setTotpEnabled(true);
+                    userRepository.save(teacher);
+                }
+            });
         }
     }
 }

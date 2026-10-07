@@ -2,7 +2,6 @@ package com.physim.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.physim.dto.CreateSavedExperimentRequest;
-import com.physim.dto.SignupRequest;
 import com.physim.dto.UpdateSavedExperimentRequest;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,18 +41,8 @@ class ExperimentControllerTest {
     }
 
     private Cookie createAndLoginUser(String email) throws Exception {
-        SignupRequest request = new SignupRequest();
-        request.setEmail(email);
-        request.setPassword("Password123!");
-        request.setName("Test User");
-
-        MvcResult result = mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        return result.getResponse().getCookie("physim_session");
+        return TestAccountHelper.createStudentAndLogin(
+                mockMvc, objectMapper, "Test User", email, "Password123!");
     }
 
     @Test

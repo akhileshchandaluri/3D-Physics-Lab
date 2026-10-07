@@ -34,6 +34,24 @@ public class UserEntity {
     @Column(name = "is_active", nullable = false)
     private boolean active = true;
 
+    @Column(name = "totp_secret", length = 64)
+    private String totpSecret;
+
+    @Column(name = "totp_enabled", nullable = false)
+    private boolean totpEnabled = false;
+
+    @Column(name = "webauthn_credential_id", columnDefinition = "TEXT")
+    private String webauthnCredentialId;
+
+    @Column(name = "webauthn_public_key", columnDefinition = "TEXT")
+    private String webauthnPublicKey;
+
+    @Column(name = "webauthn_sign_count", nullable = false)
+    private long webauthnSignCount = 0;
+
+    @Column(name = "webauthn_user_handle", length = 64)
+    private String webauthnUserHandle;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -120,6 +138,58 @@ public class UserEntity {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getTotpSecret() {
+        return totpSecret;
+    }
+
+    public void setTotpSecret(String totpSecret) {
+        this.totpSecret = totpSecret;
+    }
+
+    public boolean isTotpEnabled() {
+        return totpEnabled;
+    }
+
+    public void setTotpEnabled(boolean totpEnabled) {
+        this.totpEnabled = totpEnabled;
+    }
+
+    public String getWebauthnCredentialId() {
+        return webauthnCredentialId;
+    }
+
+    public void setWebauthnCredentialId(String webauthnCredentialId) {
+        this.webauthnCredentialId = webauthnCredentialId;
+    }
+
+    public String getWebauthnPublicKey() {
+        return webauthnPublicKey;
+    }
+
+    public void setWebauthnPublicKey(String webauthnPublicKey) {
+        this.webauthnPublicKey = webauthnPublicKey;
+    }
+
+    public long getWebauthnSignCount() {
+        return webauthnSignCount;
+    }
+
+    public void setWebauthnSignCount(long webauthnSignCount) {
+        this.webauthnSignCount = webauthnSignCount;
+    }
+
+    public String getWebauthnUserHandle() {
+        return webauthnUserHandle;
+    }
+
+    public void setWebauthnUserHandle(String webauthnUserHandle) {
+        this.webauthnUserHandle = webauthnUserHandle;
+    }
+
+    public boolean hasMfaConfigured() {
+        return totpEnabled || (webauthnCredentialId != null && !webauthnCredentialId.isBlank());
     }
 
     public Instant getCreatedAt() {

@@ -18,6 +18,10 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     Optional<UserEntity> findByEmail(String email);
 
+    Optional<UserEntity> findByWebauthnUserHandle(String webauthnUserHandle);
+
+    Optional<UserEntity> findByWebauthnCredentialId(String webauthnCredentialId);
+
     Optional<UserEntity> findByAuthProviderAndProviderId(String authProvider, String providerId);
 
     boolean existsByEmail(String email);

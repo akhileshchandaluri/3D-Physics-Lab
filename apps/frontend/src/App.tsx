@@ -3,8 +3,11 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
-import { Dashboard } from './pages/Dashboard';
+import { DashboardLayout } from './pages/DashboardLayout';
+import { CatalogPage } from './pages/CatalogPage';
+import { SavedExperimentsPage } from './pages/SavedExperimentsPage';
+import { ClassroomsPage } from './pages/ClassroomsPage';
+import { AdminConsolePage } from './pages/AdminConsolePage';
 import { OhmsLaw } from './experiments/ohmsLaw/OhmsLaw';
 import { CreepConstant } from './experiments/creepConstant/CreepConstant';
 
@@ -29,17 +32,22 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/signup" element={<Navigate to="/login" replace />} />
       <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
       <Route path="/share/:token" element={<SharedExperimentPage />} />
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <DashboardLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<CatalogPage />} />
+        <Route path="saved" element={<SavedExperimentsPage />} />
+        <Route path="classrooms" element={<ClassroomsPage />} />
+        <Route path="admin" element={<AdminConsolePage />} />
+      </Route>
       <Route
         path="/experiments/ohms-law"
         element={

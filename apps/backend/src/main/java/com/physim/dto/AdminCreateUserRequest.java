@@ -1,10 +1,12 @@
 package com.physim.dto;
 
+import com.physim.entity.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class SignupRequest {
+public class AdminCreateUserRequest {
 
     @NotBlank(message = "Full name is required")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
@@ -18,7 +20,10 @@ public class SignupRequest {
     @Size(min = 8, max = 128, message = "Password must be at least 8 characters.")
     private String password;
 
-    public SignupRequest() {
+    @NotNull(message = "Role is required")
+    private UserRole role;
+
+    public AdminCreateUserRequest() {
     }
 
     public String getName() {
@@ -43,5 +48,13 @@ public class SignupRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

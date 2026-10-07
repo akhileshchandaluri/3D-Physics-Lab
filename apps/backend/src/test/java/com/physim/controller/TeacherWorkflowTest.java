@@ -37,32 +37,45 @@ class TeacherWorkflowTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Login default seeded teacher
+        teacherCookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, "teacher@physim.edu", "TeacherPassword123!");
+
+        studentCookie = TestAccountHelper.createStudentAndLogin(
+                mockMvc,
+                objectMapper,
+                "Alice Student",
+                "student_workflow_" + System.currentTimeMillis() + "@test.com",
+                "StudentPass123!");
+    }
+
+    @Test
+    void teacherLoginDoesNotSetCookieUntilTotpAccepted() throws Exception {
         LoginRequest teacherLogin = new LoginRequest();
         teacherLogin.setEmail("teacher@physim.edu");
         teacherLogin.setPassword("TeacherPassword123!");
 
-        MvcResult teacherRes = mockMvc.perform(post("/api/v1/auth/login")
+        MvcResult passwordStep = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(teacherLogin)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mfaRequired").value(true))
+                .andExpect(jsonPath("$.mfaChallengeToken").isNotEmpty())
+                .andExpect(jsonPath("$.token").doesNotExist())
                 .andReturn();
 
-        teacherCookie = teacherRes.getResponse().getCookie("physim_session");
+        org.junit.jupiter.api.Assertions.assertNull(passwordStep.getResponse().getCookie("physim_session"));
 
-        // Create a new student
-        SignupRequest studentSignup = new SignupRequest();
-        studentSignup.setEmail("student_workflow_" + System.currentTimeMillis() + "@test.com");
-        studentSignup.setPassword("StudentPass123!");
-        studentSignup.setName("Alice Student");
+        String challengeToken = objectMapper.readTree(passwordStep.getResponse().getContentAsString())
+                .path("mfaChallengeToken").asText();
 
-        MvcResult studentRes = mockMvc.perform(post("/api/v1/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/mfa/totp/verify")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(studentSignup)))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        studentCookie = studentRes.getResponse().getCookie("physim_session");
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "challengeToken", challengeToken,
+                                "code", MfaLoginHelper.currentTotpCode(com.physim.service.MfaService.DEMO_TOTP_SECRET)))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andExpect(cookie().exists("physim_session"));
     }
 
     @Test
@@ -173,14 +186,11 @@ class TeacherWorkflowTest {
     }
 
     @Test
-    void testSignupIgnoresRoleAndAlwaysCreatesStudent() throws Exception {
-        String payload = "{\"name\":\"Hacker\",\"email\":\"hacker_" + System.currentTimeMillis() + "@test.com\",\"password\":\"HackerPass123!\",\"role\":\"TEACHER\"}";
-
+    void publicSignupIsDisabled() throws Exception {
         mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(payload))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user.role").value("STUDENT"));
+                        .content("{\"name\":\"Hacker\",\"email\":\"hacker_" + System.currentTimeMillis() + "@test.com\",\"password\":\"HackerPass123!\"}"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -490,50 +500,21 @@ class TeacherWorkflowTest {
 
     @Test
     void testTeacherCannotCreateAssignmentInAnotherTeachersClassroom() throws Exception {
-        // 1. Create a second teacher
-        SignupRequest secondTeacherSignup = new SignupRequest();
-        secondTeacherSignup.setName("Prof. Second");
-        secondTeacherSignup.setEmail("teacher2_" + System.currentTimeMillis() + "@physim.edu");
-        secondTeacherSignup.setPassword("Teacher2Password123!");
+        Cookie adminCookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, "admin@physim.edu", "AdminPassword123!");
+        String teacher2Email = "teacher2_" + System.currentTimeMillis() + "@physim.edu";
+        String teacher2Password = "Teacher2Password123!";
+        TestAccountHelper.createUser(
+                mockMvc,
+                objectMapper,
+                adminCookie,
+                "Prof. Second",
+                teacher2Email,
+                teacher2Password,
+                com.physim.entity.UserRole.TEACHER);
 
-        MvcResult signupRes = mockMvc.perform(post("/api/v1/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(secondTeacherSignup)))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        // Promote second user to TEACHER via admin
-        LoginRequest adminLogin = new LoginRequest();
-        adminLogin.setEmail("admin@physim.edu");
-        adminLogin.setPassword("AdminPassword123!");
-
-        MvcResult adminRes = mockMvc.perform(post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(adminLogin)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        Cookie adminCookie = adminRes.getResponse().getCookie("physim_session");
-        String secondUserId = objectMapper.readTree(signupRes.getResponse().getContentAsString()).get("user").get("id").asText();
-
-        mockMvc.perform(patch("/api/v1/admin/users/" + secondUserId + "/role")
-                        .cookie(adminCookie)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"role\":\"TEACHER\"}"))
-                .andExpect(status().isOk());
-
-        // Login as second teacher
-        LoginRequest teacher2Login = new LoginRequest();
-        teacher2Login.setEmail(secondTeacherSignup.getEmail());
-        teacher2Login.setPassword(secondTeacherSignup.getPassword());
-
-        MvcResult teacher2Res = mockMvc.perform(post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(teacher2Login)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        Cookie teacher2Cookie = teacher2Res.getResponse().getCookie("physim_session");
+        Cookie teacher2Cookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, teacher2Email, teacher2Password);
 
         // Teacher 1 creates a classroom
         CreateClassroomRequest classReq = new CreateClassroomRequest();

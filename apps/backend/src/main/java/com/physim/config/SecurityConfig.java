@@ -56,7 +56,8 @@ public class SecurityConfig {
                 // Public Health Check
                 .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 // Public Auth Endpoints
-                .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup", "/api/v1/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/auth/mfa/**").permitAll()
                 .requestMatchers("/api/v1/auth/oauth/**").permitAll()
                 // Public Share Endpoints
                 .requestMatchers(HttpMethod.GET, "/api/v1/share/**").permitAll()

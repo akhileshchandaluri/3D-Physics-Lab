@@ -1,19 +1,16 @@
 package com.physim.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.physim.dto.AuthResponse;
 import com.physim.dto.LoginRequest;
-import com.physim.dto.SignupRequest;
 import com.physim.dto.UserDTO;
 import com.physim.entity.SessionEntity;
 import com.physim.entity.UserEntity;
-import com.physim.entity.UserRole;
-import com.physim.exception.ConflictException;
 import com.physim.exception.UnauthorizedException;
 import com.physim.repository.SessionRepository;
 import com.physim.repository.UserRepository;
 import com.physim.security.TokenUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +24,19 @@ public class AuthService {
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MfaService mfaService;
     private final int sessionTtlDays;
 
     public AuthService(
             UserRepository userRepository,
             SessionRepository sessionRepository,
             PasswordEncoder passwordEncoder,
+            @Lazy MfaService mfaService,
             @Value("${app.security.session-ttl-days:30}") int sessionTtlDays) {
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mfaService = mfaService;
         this.sessionTtlDays = sessionTtlDays;
     }
 
@@ -52,26 +52,6 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse signup(SignupRequest request, String userAgent, String ipAddress) {
-        String email = request.getEmail().trim().toLowerCase();
-        if (userRepository.existsByEmail(email)) {
-            throw new ConflictException("An account with this email already exists. Log in or use another email.");
-        }
-
-        UserEntity user = new UserEntity();
-        user.setEmail(email);
-        user.setName(request.getName().trim());
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setRole(UserRole.STUDENT);
-        user.setActive(true);
-
-        UserEntity savedUser = userRepository.save(user);
-        String rawToken = createSession(savedUser, userAgent, ipAddress);
-
-        return new AuthResponse(toDTO(savedUser), rawToken, "Account created successfully.");
-    }
-
-    @Transactional
     public AuthResponse login(LoginRequest request, String userAgent, String ipAddress) {
         String email = request.getEmail().trim().toLowerCase();
         UserEntity user = userRepository.findByEmail(email)
@@ -81,8 +61,12 @@ public class AuthService {
             throw new UnauthorizedException("Email or password is incorrect.");
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+        if (user.getPasswordHash() == null || !passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new UnauthorizedException("Email or password is incorrect.");
+        }
+
+        if (mfaService.requiresMfa(user)) {
+            return mfaService.beginMfaChallenge(user);
         }
 
         String rawToken = createSession(user, userAgent, ipAddress);

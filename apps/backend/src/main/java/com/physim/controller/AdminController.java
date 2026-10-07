@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +24,28 @@ public class AdminController {
 
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
+    }
+
+    @PostMapping("/users")
+    @Operation(summary = "Create a user account")
+    public ResponseEntity<UserDTO> createUser(
+            @Valid @RequestBody AdminCreateUserRequest request,
+            @AuthenticationPrincipal UserPrincipal principal,
+            HttpServletRequest servletRequest
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(adminService.createUser(principal.getId(), request, servletRequest.getRemoteAddr()));
+    }
+
+    @DeleteMapping("/users/{userId}")
+    @Operation(summary = "Delete a user account")
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable String userId,
+            @AuthenticationPrincipal UserPrincipal principal,
+            HttpServletRequest servletRequest
+    ) {
+        adminService.deleteUser(principal.getId(), userId, servletRequest.getRemoteAddr());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/users")

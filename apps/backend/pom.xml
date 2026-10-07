@@ -83,6 +83,25 @@
             <version>9.47</version>
         </dependency>
 
+        <!-- TOTP authenticator apps -->
+        <dependency>
+            <groupId>dev.samstevens.totp</groupId>
+            <artifactId>totp</artifactId>
+            <version>1.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+        <!-- Browser / security-key second factor -->
+        <dependency>
+            <groupId>com.yubico</groupId>
+            <artifactId>webauthn-server-core</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+
         <!-- H2 Database for Unit Testing -->
         <dependency>
             <groupId>com.h2database</groupId>

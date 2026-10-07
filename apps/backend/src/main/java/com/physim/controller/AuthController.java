@@ -2,7 +2,6 @@ package com.physim.controller;
 
 import com.physim.dto.AuthResponse;
 import com.physim.dto.LoginRequest;
-import com.physim.dto.SignupRequest;
 import com.physim.dto.UserDTO;
 import com.physim.entity.UserEntity;
 import com.physim.exception.UnauthorizedException;
@@ -11,13 +10,11 @@ import com.physim.security.UserPrincipal;
 import com.physim.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -74,21 +71,6 @@ public class AuthController {
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
-    @PostMapping("/signup")
-    @Operation(summary = "Register student", description = "Registers a new student account and sets a session cookie.")
-    public ResponseEntity<AuthResponse> signup(
-            @Valid @RequestBody SignupRequest request,
-            HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse) {
-        String userAgent = httpRequest.getHeader("User-Agent");
-        String ipAddress = httpRequest.getRemoteAddr();
-
-        AuthResponse authResponse = authService.signup(request, userAgent, ipAddress);
-        attachSessionCookie(httpRequest, httpResponse, authResponse.getToken());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
-    }
-
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Authenticates credentials and establishes a session cookie.")
     public ResponseEntity<AuthResponse> login(
@@ -99,7 +81,9 @@ public class AuthController {
         String ipAddress = httpRequest.getRemoteAddr();
 
         AuthResponse authResponse = authService.login(request, userAgent, ipAddress);
-        attachSessionCookie(httpRequest, httpResponse, authResponse.getToken());
+        if (authResponse.getToken() != null) {
+            attachSessionCookie(httpRequest, httpResponse, authResponse.getToken());
+        }
 
         return ResponseEntity.ok(authResponse);
     }

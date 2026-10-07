@@ -1,5 +1,6 @@
 package com.physim.service;
 
+import com.physim.dto.AdminCreateUserRequest;
 import com.physim.dto.AuditLogDTO;
 import com.physim.dto.PageResponse;
 import com.physim.dto.PlatformStatsResponse;
@@ -8,10 +9,12 @@ import com.physim.entity.AuditLogEntity;
 import com.physim.entity.UserEntity;
 import com.physim.entity.UserRole;
 import com.physim.exception.BadRequestException;
+import com.physim.exception.ConflictException;
 import com.physim.exception.ResourceNotFoundException;
 import com.physim.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,7 @@ public class AdminService {
     private final AuditLogRepository auditLogRepository;
     private final AuditService auditService;
     private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
     public AdminService(
             UserRepository userRepository,
@@ -39,7 +43,8 @@ public class AdminService {
             SubmissionRepository submissionRepository,
             AuditLogRepository auditLogRepository,
             AuditService auditService,
-            AuthService authService) {
+            AuthService authService,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
         this.savedExperimentRepository = savedExperimentRepository;
@@ -49,6 +54,60 @@ public class AdminService {
         this.auditLogRepository = auditLogRepository;
         this.auditService = auditService;
         this.authService = authService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional
+    public UserDTO createUser(String adminActorId, AdminCreateUserRequest request, String ipAddress) {
+        UserEntity adminActor = userRepository.findById(adminActorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin user not found."));
+
+        String email = request.getEmail().trim().toLowerCase();
+        if (userRepository.existsByEmail(email)) {
+            throw new ConflictException("An account with this email already exists.");
+        }
+
+        UserEntity user = new UserEntity();
+        user.setEmail(email);
+        user.setName(request.getName().trim());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
+        user.setActive(true);
+
+        UserEntity saved = userRepository.save(user);
+        auditService.logEvent(
+                adminActor,
+                "CREATE_USER",
+                "User",
+                saved.getId(),
+                String.format("{\"email\":\"%s\",\"role\":\"%s\"}", saved.getEmail(), saved.getRole()),
+                ipAddress
+        );
+        return authService.toDTO(saved);
+    }
+
+    @Transactional
+    public void deleteUser(String adminActorId, String targetUserId, String ipAddress) {
+        UserEntity adminActor = userRepository.findById(adminActorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin user not found."));
+
+        UserEntity target = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+
+        if (target.getId().equals(adminActor.getId())) {
+            throw new BadRequestException("Administrators cannot delete their own account.");
+        }
+
+        sessionRepository.deleteAllByUserId(targetUserId);
+        auditService.logEvent(
+                adminActor,
+                "DELETE_USER",
+                "User",
+                targetUserId,
+                String.format("{\"email\":\"%s\",\"role\":\"%s\"}", target.getEmail(), target.getRole()),
+                ipAddress
+        );
+        userRepository.delete(target);
     }
 
     @Transactional(readOnly = true)

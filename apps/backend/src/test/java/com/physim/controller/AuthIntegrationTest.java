@@ -1,8 +1,9 @@
 package com.physim.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.physim.dto.AdminCreateUserRequest;
 import com.physim.dto.LoginRequest;
-import com.physim.dto.SignupRequest;
+import com.physim.entity.UserRole;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,36 +33,35 @@ class AuthIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testSignupLoginAndSessionRestoreFlow() throws Exception {
-        String uniqueEmail = "student_" + System.currentTimeMillis() + "@example.com";
-        SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setEmail(uniqueEmail);
-        signupRequest.setPassword("SecretPass123!");
-        signupRequest.setName("John Student");
-
-        // 1. Signup
-        MvcResult signupResult = mockMvc.perform(post("/api/v1/auth/signup")
+    void publicSignupIsDisabled() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(signupRequest)))
+                        .content("""
+                                {"name":"Anyone","email":"anyone@example.com","password":"Password123!"}
+                                """))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void adminCreatedUserCanLoginAndLogout() throws Exception {
+        String uniqueEmail = "student_" + System.currentTimeMillis() + "@example.com";
+        Cookie adminCookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, "admin@physim.edu", "AdminPassword123!");
+
+        AdminCreateUserRequest createRequest = new AdminCreateUserRequest();
+        createRequest.setEmail(uniqueEmail);
+        createRequest.setPassword("SecretPass123!");
+        createRequest.setName("John Student");
+        createRequest.setRole(UserRole.STUDENT);
+
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .cookie(adminCookie)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user.email").value(uniqueEmail))
-                .andExpect(jsonPath("$.user.role").value("STUDENT"))
-                .andExpect(jsonPath("$.token").isNotEmpty())
-                .andExpect(cookie().exists("physim_session"))
-                .andReturn();
+                .andExpect(jsonPath("$.email").value(uniqueEmail))
+                .andExpect(jsonPath("$.role").value("STUDENT"));
 
-        Cookie sessionCookie = signupResult.getResponse().getCookie("physim_session");
-        assertNotNull(sessionCookie);
-
-        // 2. Get current user profile with session cookie
-        mockMvc.perform(get("/api/v1/auth/me")
-                        .cookie(sessionCookie))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user.email").value(uniqueEmail))
-                .andExpect(jsonPath("$.user.name").value("John Student"))
-                .andExpect(jsonPath("$.user.role").value("STUDENT"));
-
-        // 3. Login with credentials
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail(uniqueEmail);
         loginRequest.setPassword("SecretPass123!");
@@ -72,17 +74,23 @@ class AuthIntegrationTest {
                 .andExpect(cookie().exists("physim_session"))
                 .andReturn();
 
-        Cookie newCookie = loginResult.getResponse().getCookie("physim_session");
+        Cookie sessionCookie = loginResult.getResponse().getCookie("physim_session");
+        assertNotNull(sessionCookie);
 
-        // 4. Logout
+        mockMvc.perform(get("/api/v1/auth/me")
+                        .cookie(sessionCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user.email").value(uniqueEmail))
+                .andExpect(jsonPath("$.user.name").value("John Student"))
+                .andExpect(jsonPath("$.user.role").value("STUDENT"));
+
         mockMvc.perform(post("/api/v1/auth/logout")
-                        .cookie(newCookie))
+                        .cookie(sessionCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Logged out successfully."));
 
-        // 5. Subsequent access with old session cookie should be 401
         mockMvc.perform(get("/api/v1/auth/me")
-                        .cookie(newCookie))
+                        .cookie(sessionCookie))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -101,67 +109,114 @@ class AuthIntegrationTest {
     }
 
     @Test
-    void testDuplicateSignupReturnsConflict() throws Exception {
+    void duplicateAdminCreateReturnsConflict() throws Exception {
+        Cookie adminCookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, "admin@physim.edu", "AdminPassword123!");
         String email = "duplicate_" + System.currentTimeMillis() + "@example.com";
-        SignupRequest request = new SignupRequest();
+
+        AdminCreateUserRequest request = new AdminCreateUserRequest();
         request.setEmail(email);
         request.setPassword("Password123!");
         request.setName("Duplicate User");
+        request.setRole(UserRole.STUDENT);
 
-        mockMvc.perform(post("/api/v1/auth/signup")
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .cookie(adminCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(post("/api/v1/auth/signup")
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .cookie(adminCookie)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error.code").value("CONFLICT"))
-                .andExpect(jsonPath("$.error.message").value("An account with this email already exists. Log in or use another email."));
+                .andExpect(jsonPath("$.error.code").value("CONFLICT"));
     }
 
     @Test
-    void testPasswordShorterThan8CharsValidation() throws Exception {
-        SignupRequest request = new SignupRequest();
-        request.setName("Test User");
-        request.setEmail("validuser@example.com");
-        request.setPassword("short");
+    void adminCreateUserValidation() throws Exception {
+        Cookie adminCookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, "admin@physim.edu", "AdminPassword123!");
 
-        mockMvc.perform(post("/api/v1/auth/signup")
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .cookie(adminCookie)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "name", "Test User",
+                                "email", "validuser@example.com",
+                                "password", "short",
+                                "role", "STUDENT"))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"))
                 .andExpect(jsonPath("$.error.details.password").value("Password must be at least 8 characters."));
-    }
 
-    @Test
-    void testInvalidEmailValidation() throws Exception {
-        SignupRequest request = new SignupRequest();
-        request.setName("Test User");
-        request.setEmail("notanemail");
-        request.setPassword("ValidPassword123!");
-
-        mockMvc.perform(post("/api/v1/auth/signup")
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .cookie(adminCookie)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "name", "Test User",
+                                "email", "notanemail",
+                                "password", "ValidPassword123!",
+                                "role", "STUDENT"))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"))
                 .andExpect(jsonPath("$.error.details.email").value("Enter a valid email address."));
     }
 
     @Test
-    void testMissingRequiredFieldsValidation() throws Exception {
-        SignupRequest request = new SignupRequest();
+    void newTeacherLoginRequiresMfaSetupAndSkipOpensSession() throws Exception {
+        Cookie adminCookie = MfaLoginHelper.loginWithOptionalMfa(
+                mockMvc, objectMapper, "admin@physim.edu", "AdminPassword123!");
 
-        mockMvc.perform(post("/api/v1/auth/signup")
+        String teacherEmail = "teacher_setup_" + System.currentTimeMillis() + "@physim.edu";
+        String teacherPassword = "TeacherSetup123!";
+        AdminCreateUserRequest createRequest = new AdminCreateUserRequest();
+        createRequest.setName("New Teacher");
+        createRequest.setEmail(teacherEmail);
+        createRequest.setPassword(teacherPassword);
+        createRequest.setRole(UserRole.TEACHER);
+
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .cookie(adminCookie)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"))
-                .andExpect(jsonPath("$.error.details.name").value("Full name is required"))
-                .andExpect(jsonPath("$.error.details.email").value("Email is required"))
-                .andExpect(jsonPath("$.error.details.password").value("Password is required"));
+                        .content(objectMapper.writeValueAsString(createRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.role").value("TEACHER"));
+
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail(teacherEmail);
+        loginRequest.setPassword(teacherPassword);
+
+        MvcResult loginRes = mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.mfaRequired").value(true))
+                .andExpect(jsonPath("$.mfaSetupRequired").value(true))
+                .andExpect(jsonPath("$.totpEnabled").value(false))
+                .andExpect(jsonPath("$.token").doesNotExist())
+                .andReturn();
+
+        org.junit.jupiter.api.Assertions.assertNull(loginRes.getResponse().getCookie("physim_session"));
+        String challengeToken = objectMapper.readTree(loginRes.getResponse().getContentAsString())
+                .path("mfaChallengeToken").asText();
+        assertNotNull(challengeToken);
+
+        MvcResult skipRes = mockMvc.perform(post("/api/v1/auth/mfa/skip")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("challengeToken", challengeToken))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andExpect(cookie().exists("physim_session"))
+                .andReturn();
+
+        Cookie session = skipRes.getResponse().getCookie("physim_session");
+        assertNotNull(session);
+
+        mockMvc.perform(get("/api/v1/auth/me").cookie(session))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user.email").value(teacherEmail))
+                .andExpect(jsonPath("$.user.role").value("TEACHER"));
     }
 }

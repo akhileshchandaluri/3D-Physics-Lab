@@ -1,16 +1,23 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { OhmsLaw } from '../experiments/ohmsLaw/OhmsLaw';
-import { CreepConstant } from '../experiments/creepConstant/CreepConstant';
+import { EXPERIMENT_REGISTRY } from '../experiments/registry';
+import type { ExperimentProps } from '../experiments/types';
 
 interface SharedData {
   id: string;
   experimentId: string;
   title: string;
   notes?: string;
-  state: Record<string, any>;
+  state: Record<string, unknown>;
   ownerName: string;
   sharedAt: string;
+}
+
+const registryComponents = new Map<string, React.LazyExoticComponent<React.ComponentType<ExperimentProps>>>();
+for (const entry of EXPERIMENT_REGISTRY) {
+  if (entry.load) {
+    registryComponents.set(entry.id, React.lazy(entry.load));
+  }
 }
 
 export function SharedExperimentPage() {
@@ -101,11 +108,19 @@ export function SharedExperimentPage() {
         </div>
       </div>
 
-      {/* Experiment */}
-      {data.experimentId === 'ohms-law' ? (
-        <OhmsLaw initialParameters={data.state} isReadOnly={true} />
-      ) : data.experimentId === 'creep-constant' ? (
-        <CreepConstant initialState={data.state} isReadOnly />
+      {registryComponents.has(data.experimentId) ? (
+        <Suspense
+          fallback={
+            <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className="spinner" style={{ width: '36px', height: '36px' }} />
+            </div>
+          }
+        >
+          {React.createElement(registryComponents.get(data.experimentId)!, {
+            initialState: data.state,
+            isReadOnly: true,
+          })}
+        </Suspense>
       ) : (
         <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
           Simulation view for {data.experimentId}

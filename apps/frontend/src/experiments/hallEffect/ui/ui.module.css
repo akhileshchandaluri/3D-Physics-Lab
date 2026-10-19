@@ -1,0 +1,162 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.panelTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.valueBadge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8d1b2e;
+  background: rgba(141, 27, 46, 0.08);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.select:focus {
+  border-color: #8d1b2e;
+}
+
+.slider {
+  width: 100%;
+  accent-color: #8d1b2e;
+  cursor: pointer;
+}
+
+.buttonGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.toggleBtn {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.toggleBtnActive {
+  background: #8d1b2e;
+  color: #ffffff;
+  border-color: #8d1b2e;
+  box-shadow: 0 2px 8px rgba(141, 27, 46, 0.25);
+}
+
+.actionBtn {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background: #8d1b2e;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(141, 27, 46, 0.2);
+}
+
+.actionBtn:hover:not(:disabled) {
+  background: #741424;
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clearBtn {
+  width: 100%;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clearBtn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-primary);
+}
+
+.tabGroup {
+  display: flex;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 12px;
+}
+
+.tabBtn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tabBtnActive {
+  color: #8d1b2e;
+  border-bottom-color: #8d1b2e;
+}

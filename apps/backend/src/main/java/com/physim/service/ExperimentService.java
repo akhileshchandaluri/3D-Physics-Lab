@@ -118,7 +118,7 @@ public class ExperimentService {
     public SavedExperimentResponse create(String userId, CreateSavedExperimentRequest request) {
         if (!CatalogConstants.isValidExperimentId(request.getExperimentId())) {
             throw new BadRequestException("Invalid experiment ID '" + request.getExperimentId() +
-                    "'. Must be one of the canonical 8 experiments: " + CatalogConstants.CANONICAL_EXPERIMENT_IDS);
+                    "'. Must be one of the canonical experiments: " + CatalogConstants.CANONICAL_EXPERIMENT_IDS);
         }
 
         UserEntity user = userRepository.findById(userId)

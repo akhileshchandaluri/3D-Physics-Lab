@@ -1,43 +1,37 @@
 import { Link } from 'react-router-dom';
+import { EXPERIMENT_REGISTRY } from '../experiments/registry';
 import './Dashboard.css';
 
-const CANONICAL_EXPERIMENTS = [
-  { id: 'ohms-law', code: 'Session 01', title: 'Introductory Session — Ohm\'s Law', path: '/experiments/ohms-law', available: true },
-  { id: 'lattice-constant', code: 'Session 02', title: 'Determination of Lattice Constant', path: '', available: false },
-  { id: 'lycopodium-laser', code: 'Session 03', title: 'Determination of Particle Size of Lycopodium Powder Using Laser', path: '', available: false },
-  { id: 'youngs-modulus', code: 'Session 04', title: 'Determination of Young\'s Modulus — Uniform Bending Method', path: '', available: false },
-  { id: 'creep-constant', code: 'Session 05', title: 'Determination of Creep Constant', path: '/experiments/creep-constant', available: true },
-  { id: 'hall-effect', code: 'Session 06', title: 'Determination of Hall Coefficient Using Hall Effect', path: '', available: false },
-  { id: 'plancks-constant', code: 'Session 07', title: 'Determination of Planck\'s Constant', path: '', available: false },
-  { id: 'solar-cell', code: 'Session 08', title: 'Solar Cell Characteristics', path: '', available: false },
-];
-
 export function CatalogPage() {
+  const totalCount = EXPERIMENT_REGISTRY.length;
+  const interactiveCount = EXPERIMENT_REGISTRY.filter((s) => s.available).length;
+  const catalogReadyCount = totalCount - interactiveCount;
+
   return (
     <div>
       <div className="dash-welcome">
         <div>
           <h1 className="dash-title">Canonical Experiment Catalog</h1>
-          <p className="dash-subtitle">Eight standard university virtual physics laboratory simulations</p>
+          <p className="dash-subtitle">Standard university virtual physics laboratory simulations</p>
         </div>
         <div className="dash-stats-row">
           <div className="dash-mini-stat">
-            <span className="dash-mini-val">8</span>
+            <span className="dash-mini-val">{totalCount}</span>
             <span className="dash-mini-label">Canonical Labs</span>
           </div>
           <div className="dash-mini-stat">
-            <span className="dash-mini-val">2</span>
+            <span className="dash-mini-val">{interactiveCount}</span>
             <span className="dash-mini-label">Interactive</span>
           </div>
           <div className="dash-mini-stat">
-            <span className="dash-mini-val">6</span>
+            <span className="dash-mini-val">{catalogReadyCount}</span>
             <span className="dash-mini-label">Catalog Ready</span>
           </div>
         </div>
       </div>
 
       <div className="sessions-list">
-        {CANONICAL_EXPERIMENTS.map((s, i) => (
+        {EXPERIMENT_REGISTRY.map((s, i) => (
           <div
             key={s.id}
             className={`session-card ${s.available ? 'session-available' : 'session-locked'}`}
@@ -83,4 +77,4 @@ export function CatalogPage() {
   );
 }
 
-export const CANONICAL_EXPERIMENT_OPTIONS = CANONICAL_EXPERIMENTS;
+export const CANONICAL_EXPERIMENT_OPTIONS = EXPERIMENT_REGISTRY;

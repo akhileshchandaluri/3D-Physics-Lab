@@ -12,6 +12,7 @@ interface PartsTrayProps {
   rigReady: boolean
   onDragStart: (id: string, event: ReactPointerEvent<HTMLButtonElement>) => void
   onDisassemble: () => void
+  onAutoAssemble?: () => void
 }
 
 const STEPS: { id: string; label: string; detail: string; swatch: string }[] = [
@@ -32,6 +33,7 @@ export function PartsTray({
   rigReady,
   onDragStart,
   onDisassemble,
+  onAutoAssemble,
 }: PartsTrayProps) {
   const next = nextPart(placed)
   const stepNumber = next ? PART_ORDER.indexOf(next) + 1 : PART_ORDER.length
@@ -113,9 +115,37 @@ export function PartsTray({
         </ol>
       )}
 
-      <button type="button" className={styles.secondary} disabled={!anyPlaced} onClick={onDisassemble}>
-        Start again
-      </button>
+      <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
+        {!rigReady && onAutoAssemble ? (
+          <button
+            type="button"
+            className={styles.secondary}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '8px',
+              border: 'none',
+              background: '#8d1b2e',
+              color: '#ffffff',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontSize: '12px',
+              flex: 1,
+            }}
+            onClick={onAutoAssemble}
+          >
+            ⚡ Quick Assemble
+          </button>
+        ) : null}
+        <button
+          type="button"
+          className={styles.secondary}
+          disabled={!anyPlaced}
+          onClick={onDisassemble}
+          style={{ flex: 1 }}
+        >
+          Reset rig
+        </button>
+      </div>
     </aside>
   )
 }

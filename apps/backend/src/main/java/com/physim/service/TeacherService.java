@@ -203,7 +203,7 @@ public class TeacherService {
         }
 
         if (!CatalogConstants.isValidExperimentId(request.getExperimentId())) {
-            throw new BadRequestException("Invalid experiment ID. Must be one of the canonical 8: " + CatalogConstants.CANONICAL_EXPERIMENT_IDS);
+            throw new BadRequestException("Invalid experiment ID. Must be one of the canonical experiments: " + CatalogConstants.CANONICAL_EXPERIMENT_IDS);
         }
 
         String instructions = request.getInstructions();

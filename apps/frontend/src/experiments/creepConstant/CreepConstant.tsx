@@ -275,11 +275,12 @@ export function CreepConstant({ initialState, isReadOnly = false }: CreepConstan
       }
       setDrag((current) => {
         if (!current || current.id !== id) return current
-        if (current.moved) {
-          setBanner('Drop the part on the highlighted mount.')
+        if (!current.moved) {
+          tryAttach(id)
           return null
         }
-        return current
+        setBanner('Drop the part on the highlighted mount.')
+        return null
       })
     }
     window.addEventListener('pointermove', move)
@@ -289,6 +290,30 @@ export function CreepConstant({ initialState, isReadOnly = false }: CreepConstan
       window.removeEventListener('pointerup', up)
     }
   }
+
+  const autoAssemble = useCallback(() => {
+    if (isReadOnly) return
+    const allPlaced: Placed = {
+      clamp: true,
+      wire: true,
+      hook: true,
+      scale: true,
+      watch: true,
+      sheet: true,
+      hanger: true,
+    }
+    const chosenMetal: MetalId = metalId || 'lead'
+    engine.metalId = chosenMetal
+    setMetalId(chosenMetal)
+    placedRef.current = allPlaced
+    setPlaced(allPlaced)
+    const initialMass = 0.4
+    engine.massKg = initialMass
+    massRef.current = initialMass
+    setMassKg(initialMass)
+    setBanner('Apparatus assembled with 400 g load. Click Start on the stopwatch to observe wire creep.')
+    publish(engine)
+  }, [engine, isReadOnly, metalId])
 
   function toggleRun() {
     const upcoming = nextPart(placedRef.current)
@@ -557,6 +582,7 @@ export function CreepConstant({ initialState, isReadOnly = false }: CreepConstan
         rigReady={assembled}
         onDragStart={beginDrag}
         onDisassemble={disassemble}
+        onAutoAssemble={autoAssemble}
       />
       <div className={styles.stageColumn}>
       <div className={styles.stage}>

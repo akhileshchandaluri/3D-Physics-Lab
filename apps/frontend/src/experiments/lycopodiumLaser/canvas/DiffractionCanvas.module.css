@@ -1,0 +1,139 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.canvasWrap {
+  width: 100%;
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  background: #050508;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+  cursor: crosshair;
+}
+
+.sliderControlRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.sliderLabel {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rangeSlider {
+  flex: 1;
+  accent-color: var(--primary-600);
+  cursor: pointer;
+}
+
+.sliderVal {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--primary-600);
+  min-width: 60px;
+  text-align: right;
+}
+
+.readoutBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.measureVal {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--primary-600);
+}
+
+.btnGroup {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.button {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  background: var(--surface-card-hover);
+  border-color: var(--border-accent);
+}
+
+.primaryBtn {
+  background: var(--primary-600);
+  color: #ffffff;
+  border-color: var(--primary-700);
+}
+
+.primaryBtn:hover {
+  background: var(--primary-700);
+}
+
+.caption {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+}

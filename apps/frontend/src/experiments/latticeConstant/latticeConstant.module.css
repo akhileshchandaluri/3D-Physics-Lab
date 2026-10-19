@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.controlsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.visualizationColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.resultsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.resultsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .resultsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

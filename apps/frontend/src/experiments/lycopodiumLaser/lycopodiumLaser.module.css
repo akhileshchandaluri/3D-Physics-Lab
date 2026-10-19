@@ -1,0 +1,59 @@
+.saveControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.saveInput {
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  max-width: 180px;
+}
+
+.saveInput:focus {
+  outline: none;
+  border-color: var(--primary-500);
+}
+
+.saveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--primary-700);
+  background: var(--primary-600);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveBtn:hover {
+  background: var(--primary-700);
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.statusMsg {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.statusSaved {
+  color: #10b981;
+}
+
+.statusError {
+  color: var(--error-text);
+}

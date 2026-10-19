@@ -59,19 +59,19 @@ const experiments = [
   },
   {
     title: 'Lycopodium powder',
-    description: 'Session 03. Particle size of lycopodium powder using a laser. This session is listed and not built yet.',
+    description: 'Session 03. Particle size of lycopodium powder using a laser diffraction pattern.',
     icon: <ChartIcon />,
     color: '#7cb342',
-    status: 'Not built yet' as const,
-    path: '',
+    status: 'Available' as const,
+    path: '/experiments/lycopodium-laser',
   },
   {
     title: "Young's modulus",
-    description: 'Session 04. Uniform bending method. This session is listed and not built yet.',
+    description: 'Session 04. Uniform bending method using travelling microscope and slotted weights.',
     icon: <BeakerIcon />,
     color: '#8d1b2e',
-    status: 'Not built yet' as const,
-    path: '',
+    status: 'Available' as const,
+    path: '/experiments/youngs-modulus',
   },
   {
     title: 'Creep constant',
@@ -104,6 +104,14 @@ const experiments = [
     color: '#3c414c',
     status: 'Not built yet' as const,
     path: '',
+  },
+  {
+    title: 'Laser diffraction grating',
+    description: 'Session 09. Determination of wavelength of laser using diffraction grating.',
+    icon: <BoltIcon />,
+    color: '#ef4444',
+    status: 'Available' as const,
+    path: '/experiments/laser-grating',
   },
 ];
 

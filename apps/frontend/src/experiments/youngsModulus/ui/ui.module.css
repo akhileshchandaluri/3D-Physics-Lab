@@ -1,0 +1,318 @@
+.panel {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 10px;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.select,
+.input {
+  background: var(--input-bg);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.select:focus,
+.input:focus {
+  border-color: var(--primary-500);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.button {
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--surface-card-hover);
+  border-color: var(--border-accent);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.primaryButton {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: #ffffff;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--primary-700);
+  border-color: var(--primary-700);
+}
+
+.secondaryButton {
+  background: transparent;
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--badge-bg);
+  color: var(--primary-600);
+  border: 1px solid var(--badge-border);
+  font-weight: 600;
+}
+
+/* Warnings and Alerts */
+.warningBox {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #d97706;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.dangerBox {
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: #ef4444;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Microscope Readout Widget */
+.microscopeWidget {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.readoutGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.readoutCell {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.readoutLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.readoutValue {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--text-primary);
+}
+
+.highlightValue {
+  color: var(--primary-600);
+}
+
+/* Dimension Cards */
+.dimensionCard {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dimensionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dimensionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.trialsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.trialsTable th,
+.trialsTable td {
+  padding: 4px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.trialsTable th {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Result Banner */
+.resultBanner {
+  background: var(--surface-card);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.resultStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.resultStatCard {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statTitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: monospace;
+}
+
+.statSub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Theory Drawer */
+.theoryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.theoryHeading {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 8px 0 4px 0;
+}
+
+.formulaBox {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--primary-600);
+}

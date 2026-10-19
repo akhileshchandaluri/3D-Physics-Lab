@@ -1,16 +1,16 @@
 /* ===== DESIGN SYSTEM — LIGHT (default) + DARK ===== */
 :root {
-  /* Primary Palette */
-  --primary-50: #eef2ff;
-  --primary-100: #e0e7ff;
-  --primary-200: #c7d2fe;
-  --primary-300: #a5b4fc;
-  --primary-400: #818cf8;
-  --primary-500: #6366f1;
-  --primary-600: #4f46e5;
-  --primary-700: #4338ca;
-  --primary-800: #3730a3;
-  --primary-900: #312e81;
+  /* Primary Palette — KL Maroon / Crimson (#8d1b2e) */
+  --primary-50: #fdf2f4;
+  --primary-100: #fce7ea;
+  --primary-200: #f8d0d7;
+  --primary-300: #f2aab6;
+  --primary-400: #e36a7e;
+  --primary-500: #ad2038;
+  --primary-600: #8d1b2e;
+  --primary-700: #741424;
+  --primary-800: #5c101d;
+  --primary-900: #420b15;
 
   /* Accent */
   --accent-400: #34d399;
@@ -35,29 +35,29 @@
 
   --border-subtle: rgba(0, 0, 0, 0.06);
   --border-default: rgba(0, 0, 0, 0.1);
-  --border-accent: rgba(99, 102, 241, 0.25);
+  --border-accent: rgba(141, 27, 46, 0.25);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.12);
+  --shadow-glow: 0 0 40px rgba(141, 27, 46, 0.12);
 
   --nav-bg: rgba(255, 255, 255, 0.82);
-  --hero-orb-1: rgba(99, 102, 241, 0.12);
-  --hero-orb-2: rgba(139, 92, 246, 0.10);
+  --hero-orb-1: rgba(141, 27, 46, 0.12);
+  --hero-orb-2: rgba(173, 32, 56, 0.10);
   --hero-orb-3: rgba(16, 185, 129, 0.08);
   --grid-line: rgba(0, 0, 0, 0.03);
-  --badge-bg: rgba(99, 102, 241, 0.08);
-  --badge-border: rgba(99, 102, 241, 0.15);
+  --badge-bg: rgba(141, 27, 46, 0.08);
+  --badge-border: rgba(141, 27, 46, 0.18);
   --proof-bg: rgba(0, 0, 0, 0.01);
   --section-alt-bg: rgba(0, 0, 0, 0.015);
   --input-bg: rgba(0, 0, 0, 0.03);
   --input-focus-bg: rgba(0, 0, 0, 0.01);
-  --input-focus-ring: rgba(99, 102, 241, 0.12);
-  --auth-brand-bg: linear-gradient(160deg, rgba(99, 102, 241, 0.06) 0%, rgba(139, 92, 246, 0.03) 100%);
+  --input-focus-ring: rgba(141, 27, 46, 0.12);
+  --auth-brand-bg: linear-gradient(160deg, rgba(141, 27, 46, 0.08) 0%, rgba(173, 32, 56, 0.04) 100%);
   --auth-form-bg: rgba(255, 255, 255, 0.5);
-  --auth-spin-bg: rgba(99, 102, 241, 0.03);
+  --auth-spin-bg: rgba(141, 27, 46, 0.03);
   --error-bg: rgba(239, 68, 68, 0.06);
   --error-border: rgba(239, 68, 68, 0.15);
   --error-text: #dc2626;
@@ -66,8 +66,8 @@
   --social-btn-border: rgba(0, 0, 0, 0.1);
   --logout-hover-bg: rgba(239, 68, 68, 0.06);
   --logout-hover-border: rgba(239, 68, 68, 0.15);
-  --cta-orb-1: rgba(99, 102, 241, 0.10);
-  --cta-orb-2: rgba(139, 92, 246, 0.08);
+  --cta-orb-1: rgba(141, 27, 46, 0.10);
+  --cta-orb-2: rgba(173, 32, 56, 0.08);
   --scrollbar-thumb: #d1d5db;
   --scrollbar-hover: #9ca3af;
   --toggle-bg: rgba(0, 0, 0, 0.05);
@@ -76,7 +76,7 @@
   --spinner-track: rgba(255, 255, 255, 0.3);
 
   /* Shared */
-  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  --gradient-primary: linear-gradient(135deg, #8d1b2e 0%, #ad2038 50%, #c4324d 100%);
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
@@ -103,29 +103,29 @@
 
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-default: rgba(255, 255, 255, 0.1);
-  --border-accent: rgba(99, 102, 241, 0.3);
+  --border-accent: rgba(227, 106, 126, 0.3);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.25);
+  --shadow-glow: 0 0 40px rgba(141, 27, 46, 0.25);
 
   --nav-bg: rgba(10, 10, 26, 0.82);
-  --hero-orb-1: rgba(99, 102, 241, 0.25);
-  --hero-orb-2: rgba(139, 92, 246, 0.20);
+  --hero-orb-1: rgba(141, 27, 46, 0.25);
+  --hero-orb-2: rgba(173, 32, 56, 0.20);
   --hero-orb-3: rgba(16, 185, 129, 0.15);
   --grid-line: rgba(255, 255, 255, 0.02);
-  --badge-bg: rgba(99, 102, 241, 0.12);
-  --badge-border: rgba(99, 102, 241, 0.25);
+  --badge-bg: rgba(141, 27, 46, 0.15);
+  --badge-border: rgba(227, 106, 126, 0.25);
   --proof-bg: rgba(255, 255, 255, 0.01);
   --section-alt-bg: rgba(255, 255, 255, 0.01);
   --input-bg: rgba(255, 255, 255, 0.04);
   --input-focus-bg: rgba(255, 255, 255, 0.06);
-  --input-focus-ring: rgba(99, 102, 241, 0.15);
-  --auth-brand-bg: linear-gradient(160deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
+  --input-focus-ring: rgba(141, 27, 46, 0.15);
+  --auth-brand-bg: linear-gradient(160deg, rgba(141, 27, 46, 0.10) 0%, rgba(173, 32, 56, 0.05) 100%);
   --auth-form-bg: rgba(10, 10, 26, 0.6);
-  --auth-spin-bg: rgba(99, 102, 241, 0.06);
+  --auth-spin-bg: rgba(141, 27, 46, 0.06);
   --error-bg: rgba(239, 68, 68, 0.1);
   --error-border: rgba(239, 68, 68, 0.2);
   --error-text: #fca5a5;
@@ -134,14 +134,13 @@
   --social-btn-border: rgba(255, 255, 255, 0.1);
   --logout-hover-bg: rgba(239, 68, 68, 0.08);
   --logout-hover-border: rgba(239, 68, 68, 0.2);
-  --cta-orb-1: rgba(99, 102, 241, 0.20);
-  --cta-orb-2: rgba(139, 92, 246, 0.15);
+  --cta-orb-1: rgba(141, 27, 46, 0.20);
+  --cta-orb-2: rgba(173, 32, 56, 0.15);
   --scrollbar-thumb: #374151;
   --scrollbar-hover: #4b5563;
   --toggle-bg: rgba(255, 255, 255, 0.06);
   --toggle-hover: rgba(255, 255, 255, 0.1);
   --toggle-color: #94a3b8;
-  --spinner-track: rgba(255, 255, 255, 0.3);
 }
 
 /* ===== RESET ===== */

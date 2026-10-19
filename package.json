@@ -21,7 +21,7 @@
     "test": "npm run test:backend",
     "test:backend": "mvn -f apps/backend/pom.xml test",
     "test:frontend": "npm run test --workspace=apps/frontend --if-present",
-    "lint": "eslint apps/frontend",
+    "lint": "eslint -c apps/frontend/eslint.config.js apps/frontend",
     "format": "prettier --write apps/frontend"
   },
   "keywords": [

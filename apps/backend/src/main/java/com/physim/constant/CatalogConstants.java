@@ -18,6 +18,7 @@ public final class CatalogConstants {
     public static final String HALL_EFFECT = "hall-effect";
     public static final String PLANCKS_CONSTANT = "plancks-constant";
     public static final String SOLAR_CELL = "solar-cell";
+    public static final String LASER_GRATING = "laser-grating";
 
     public static final List<String> CANONICAL_EXPERIMENT_IDS = Collections.unmodifiableList(Arrays.asList(
         OHMS_LAW,
@@ -27,7 +28,8 @@ public final class CatalogConstants {
         CREEP_CONSTANT,
         HALL_EFFECT,
         PLANCKS_CONSTANT,
-        SOLAR_CELL
+        SOLAR_CELL,
+        LASER_GRATING
     ));
 
     public static final int MAX_STATE_DATA_BYTES = 65536; // 64 KB limit

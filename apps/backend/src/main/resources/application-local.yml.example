@@ -4,9 +4,9 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/physim_db
+    url: jdbc:postgresql://localhost:5432/physim
     username: postgres
-    password: YOUR_POSTGRES_PASSWORD_HERE
+    password: ${DATABASE_PASSWORD:}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -18,12 +18,15 @@ spring:
 app:
   security:
     cookie-name: physim_session
-    cookie-secret: replace_with_a_secure_random_32_character_secret_key!
+    cookie-secret: dev_secret_cookie_signing_key_at_least_32_chars_long!
     session-ttl-days: 30
+  admin:
+    initial-email: admin@physim.edu
+    initial-password: AdminPassword123!
+    initial-name: System Administrator
   oauth2:
     google:
-      client-id: YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com
-      client-secret: YOUR_GOOGLE_CLIENT_SECRET_HERE
+      client-id: dev-google-client-id.apps.googleusercontent.com
+      client-secret: dev-fake-google-client-secret
       redirect-uri: http://localhost:5173/oauth/callback
       allowed-redirect-uris: http://localhost:5173/oauth/callback,http://localhost:5174/oauth/callback,http://127.0.0.1:5173/oauth/callback,http://127.0.0.1:5174/oauth/callback
-

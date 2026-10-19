@@ -26,7 +26,7 @@ public class ExperimentController {
     }
 
     @PostMapping
-    @Operation(summary = "Save experiment", description = "Saves simulation state parameters for any of the 8 canonical experiments.")
+    @Operation(summary = "Save experiment", description = "Saves simulation state parameters for any of the canonical experiments.")
     public ResponseEntity<SavedExperimentResponse> create(
             @AuthenticationPrincipal UserPrincipal principal,
             @Valid @RequestBody CreateSavedExperimentRequest request) {
